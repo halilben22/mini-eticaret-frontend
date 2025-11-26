@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route,Link,useNavigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Link, useNavigate } from "react-router-dom";
 
 import axios from "axios";
 
@@ -19,14 +19,14 @@ function Navbar() {
 
   if (token) {
     const decodedToken = parseJwt(token);
-console.log("Çözülen Token:", decodedToken);
-if (decodedToken) {
-        // Küçük/Büyük harf sorunu olmasın diye hepsini küçültüp alalım
-        userRole = decodedToken.role ? decodedToken.role.toLowerCase() : null;
-        console.log("Algılanan Rol:", userRole);
+    console.log("Çözülen Token:", decodedToken);
+    if (decodedToken) {
+      // Küçük/Büyük harf sorunu olmasın diye hepsini küçültüp alalım
+      userRole = decodedToken.role ? decodedToken.role.toLowerCase() : null;
+      console.log("Algılanan Rol:", userRole);
     }
 
-    userRole = decodedToken ? decodedToken.role : null; 
+    userRole = decodedToken ? decodedToken.role : null;
     // Backend'de claim adı "role" olarak ayarlandı.
   }
 
@@ -47,30 +47,40 @@ if (decodedToken) {
 
     // 2. Tarayıcıdan sil
     localStorage.removeItem("token");
-    
+
     // 3. Giriş sayfasına yönlendir ve sayfayı yenile (State temizliği için)
     alert("Çıkış yapıldı 👋");
-    window.location.href = "/login"; 
+    window.location.href = "/login";
   };
 
   return (
     <nav style={{ padding: "15px", backgroundColor: "#333", color: "white", display: "flex", gap: "20px", alignItems: "center" }}>
       <Link to="/" style={{ color: "white", textDecoration: "none" }}>🏠 Ana Sayfa</Link>
-      
+
       {!token ? (
-        <Link to="/login" style={{ color: "white", textDecoration: "none" }}>🔑 Giriş Yap</Link>
+        <div style={{ display: "flex", gap: "10px" }}>
+          <Link to="/login" style={{ color: "white", textDecoration: "none", border: "1px solid white", padding: "5px 10px", borderRadius: "5px" }}>
+            🔑 Giriş Yap
+          </Link>
+
+          {/* YENİ EKLENEN LİNK */}
+          <Link to="/register" style={{ color: "#333", backgroundColor: "#ffd700", textDecoration: "none", padding: "5px 10px", borderRadius: "5px", fontWeight: "bold" }}>
+            📝 Kayıt Ol
+          </Link>
+        </div>
+
       ) : (
         <>
           <Link to="/cart" style={{ color: "white", textDecoration: "none" }}>🛒 Sepetim</Link>
-         
-<Link to="/orders" style={{ color: "white", textDecoration: "none" }}>📦 Siparişlerim</Link>
-{userRole==="admin" && (
-  <Link to="/admin" style={{ color: "gold", textDecoration: "none", fontWeight: "bold" }}>👑 Admin Panel</Link>
-)}
+
+          <Link to="/orders" style={{ color: "white", textDecoration: "none" }}>📦 Siparişlerim</Link>
+          {userRole === "admin" && (
+            <Link to="/admin" style={{ color: "gold", textDecoration: "none", fontWeight: "bold" }}>👑 Admin Panel</Link>
+          )}
 
           {/* Çıkış Butonu */}
-          <button 
-            onClick={handleLogout} 
+          <button
+            onClick={handleLogout}
             style={{ marginLeft: "auto", backgroundColor: "red", color: "white", border: "none", padding: "5px 10px", cursor: "pointer", borderRadius: "5px" }}
           >
             Çıkış Yap 🚪

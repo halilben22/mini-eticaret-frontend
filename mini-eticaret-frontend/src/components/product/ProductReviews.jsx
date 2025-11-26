@@ -77,6 +77,7 @@ export default function ProductReviews({ productId, reviews, onReviewAdded }) {
             ) : (
                 <div style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
                     {reviews.map((review) => (
+
                         <div key={review.id} style={{ background: "white", padding: "15px", borderRadius: "8px", border: "1px solid #eee" }}>
                             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "5px" }}>
                                 <strong>{review.user?.full_name || "Kullanıcı"}</strong>
