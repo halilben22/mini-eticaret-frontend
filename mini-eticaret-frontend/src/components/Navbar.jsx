@@ -3,9 +3,33 @@ import { BrowserRouter, Routes, Route,Link,useNavigate } from "react-router-dom"
 import axios from "axios";
 
 
+const parseJwt = (token) => {
+  try {
+    return JSON.parse(atob(token.split('.')[1]));
+  } catch (e) {
+    return null;
+  }
+};
+
 function Navbar() {
   const navigate = useNavigate();
   const token = localStorage.getItem("token"); // Giriş yapmış mı kontrolü için
+
+  let userRole = null;
+
+  if (token) {
+    const decodedToken = parseJwt(token);
+console.log("Çözülen Token:", decodedToken);
+if (decodedToken) {
+        // Küçük/Büyük harf sorunu olmasın diye hepsini küçültüp alalım
+        userRole = decodedToken.role ? decodedToken.role.toLowerCase() : null;
+        console.log("Algılanan Rol:", userRole);
+    }
+
+    userRole = decodedToken ? decodedToken.role : null; 
+    // Backend'de claim adı "role" olarak ayarlanmıştı.
+  }
+
 
   const handleLogout = async () => {
     if (!token) return;
@@ -40,6 +64,10 @@ function Navbar() {
           <Link to="/cart" style={{ color: "white", textDecoration: "none" }}>🛒 Sepetim</Link>
          
 <Link to="/orders" style={{ color: "white", textDecoration: "none" }}>📦 Siparişlerim</Link>
+{userRole==="admin" && (
+  <Link to="/admin" style={{ color: "gold", textDecoration: "none", fontWeight: "bold" }}>👑 Admin Panel</Link>
+)}
+
           {/* Çıkış Butonu */}
           <button 
             onClick={handleLogout} 

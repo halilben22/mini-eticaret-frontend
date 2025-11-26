@@ -6,6 +6,7 @@ import CartPage from "./pages/CartPage";
 import Navbar from "./components/Navbar";
 import PaymentPage from "./pages/PaymentPage";
 import OrdersPage from "./pages/OrdersPage";
+import AdminDashboard from "./pages/admin/AdminDashboard";
 
 
 function App() {
@@ -19,6 +20,7 @@ return(
 <Route path="/payment" element={<PaymentPage />} />
 
 <Route path="/orders" element={<OrdersPage />} />
+<Route path="/admin" element={<AdminDashboard />} />
   </Routes>
   </BrowserRouter>
   );
