@@ -27,7 +27,7 @@ if (decodedToken) {
     }
 
     userRole = decodedToken ? decodedToken.role : null; 
-    // Backend'de claim adı "role" olarak ayarlanmıştı.
+    // Backend'de claim adı "role" olarak ayarlandı.
   }
 
 
