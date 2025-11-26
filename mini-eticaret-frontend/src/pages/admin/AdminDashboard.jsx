@@ -21,10 +21,11 @@ const fetchData=async()=>{
     if(!token){navigate("/login");return;}
 try{
    //istatistikleri çek
-   const statsRes=await axios.get("http://localhost:8080/admin/orders",{
+   const statsRes=await axios.get("http://localhost:8080/admin/stats",{
   headers: { Authorization: `Bearer ${token}` }
    });
-   setStats(statsRes.data.data)
+   console.log(statsRes.data)
+   setStats(statsRes.data)
 
 
    //Siparişlerin hepsini çek
