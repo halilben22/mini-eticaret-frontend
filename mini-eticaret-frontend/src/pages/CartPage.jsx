@@ -38,28 +38,33 @@ export default function CartPage() {
   }, []);
 
   // --- SİPARİŞİ TAMAMLA (CHECKOUT) ---
-  const handleCheckout = async () => {
+ const handleCheckout = async () => {
     if (!address) {
       alert("Lütfen bir teslimat adresi girin!");
       return;
     }
-
     const token = localStorage.getItem("token");
 
     try {
-      await axios.post(
-        "http://localhost:8080/checkout",
-        { shipping_address: address }, // Backend bu alanı bekliyor
+      // 1. Siparişi Oluştur (Sepet Silinmez)
+      // DİKKAT: Endpoint değişti -> /create-order
+      const response = await axios.post(
+        "http://localhost:8080/create-order",
+        { shipping_address: address },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      alert("Siparişiniz başarıyla alındı! 🎉");
-      setCartItems([]); // Sepeti ekrandan temizle
-      setAddress("");   // Adresi temizle
+      // 2. Ödeme Sayfasına Yönlendir (Verileri taşıyarak)
+      const { order_id, total } = response.data;
+      
+      // navigate fonksiyonu ile state (veri) taşıyabiliriz
+      navigate("/payment", { 
+        state: { orderId: order_id, totalAmount: total } 
+      });
 
     } catch (error) {
       console.error("Sipariş hatası:", error);
-      alert("Sipariş oluşturulamadı: " + (error.response?.data || "Bilinmeyen hata"));
+      alert("Hata: " + (error.response?.data?.error || "Bilinmeyen hata"));
     }
   };
 
