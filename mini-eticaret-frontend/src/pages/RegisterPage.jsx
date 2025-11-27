@@ -1,88 +1,64 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
-import { toast } from "react-toastify"; // Toast ekledik
+import { Container, Card, Form, Button } from 'react-bootstrap';
+import { toast } from 'react-toastify';
 
 export default function RegisterPage() {
     const [fullName, setFullName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-
     const navigate = useNavigate();
 
     const handleRegister = async (e) => {
         e.preventDefault();
-
         try {
-            // Backend'e Kayıt İsteği
-            await axios.post("http://localhost:8080/register", {
-                full_name: fullName,
-                email: email,
-                password: password
-            });
-
-            toast.success("Kayıt Başarılı! Şimdi giriş yapabilirsin. 🎉");
-
-            // Başarılı olursa Giriş Sayfasına at
+            await axios.post("http://localhost:8080/register", { full_name: fullName, email, password });
+            toast.success("Kayıt Başarılı! Giriş yapabilirsiniz.");
             navigate("/login");
-
         } catch (error) {
-            console.error("Kayıt hatası:", error);
-            // Backend'den gelen hatayı göster (Örn: Email kullanımda)
-            const errorMsg = error.response?.data?.error || "Kayıt olunamadı!";
-            toast.error(errorMsg);
+            toast.error(error.response?.data?.error || "Kayıt olunamadı");
         }
     };
 
     return (
-        <div style={{ maxWidth: "400px", margin: "50px auto", padding: "30px", background: "white", borderRadius: "10px", boxShadow: "0 4px 10px rgba(0,0,0,0.1)" }}>
-            <h2 style={{ textAlign: "center", marginBottom: "20px" }}>📝 Kayıt Ol</h2>
+        <div className="d-flex align-items-center justify-content-center" style={{ minHeight: "80vh", background: "#f0f2f5" }}>
+            <Container style={{ maxWidth: "450px" }}>
+                <Card className="shadow-lg border-0 p-4">
+                    <Card.Body>
+                        <div className="text-center mb-4">
+                            <h2 className="fw-bold text-success">Kayıt Ol</h2>
+                            <p className="text-muted">Aramıza katılmak için formu doldur</p>
+                        </div>
 
-            <form onSubmit={handleRegister}>
-                <div style={{ marginBottom: "15px" }}>
-                    <label>Ad Soyad:</label>
-                    <input
-                        type="text"
-                        placeholder="Örn: Ahmet Yılmaz"
-                        value={fullName}
-                        onChange={(e) => setFullName(e.target.value)}
-                        style={{ width: "100%", padding: "10px", marginTop: "5px" }}
-                        required
-                    />
-                </div>
+                        <Form onSubmit={handleRegister}>
+                            <Form.Group className="mb-3">
+                                <Form.Label>Ad Soyad</Form.Label>
+                                <Form.Control type="text" placeholder="Adınız Soyadınız" value={fullName} onChange={(e) => setFullName(e.target.value)} required />
+                            </Form.Group>
 
-                <div style={{ marginBottom: "15px" }}>
-                    <label>Email:</label>
-                    <input
-                        type="email"
-                        placeholder="ornek@email.com"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        style={{ width: "100%", padding: "10px", marginTop: "5px" }}
-                        required
-                    />
-                </div>
+                            <Form.Group className="mb-3">
+                                <Form.Label>Email</Form.Label>
+                                <Form.Control type="email" placeholder="ornek@email.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                            </Form.Group>
 
-                <div style={{ marginBottom: "20px" }}>
-                    <label>Şifre:</label>
-                    <input
-                        type="password"
-                        placeholder="******"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        style={{ width: "100%", padding: "10px", marginTop: "5px" }}
-                        required
-                    />
-                </div>
+                            <Form.Group className="mb-4">
+                                <Form.Label>Şifre</Form.Label>
+                                <Form.Control type="password" placeholder="******" value={password} onChange={(e) => setPassword(e.target.value)} required />
+                            </Form.Group>
 
-                <button type="submit" style={{ width: "100%", padding: "12px", backgroundColor: "#28a745", color: "white", border: "none", borderRadius: "5px", fontSize: "16px" }}>
-                    Kayıt Ol
-                </button>
-            </form>
+                            <Button variant="success" type="submit" className="w-100 py-2 fw-bold mb-3">
+                                Hesap Oluştur
+                            </Button>
+                        </Form>
 
-            <p style={{ marginTop: "20px", textAlign: "center" }}>
-                Zaten hesabın var mı? <Link to="/login" style={{ color: "#007bff" }}>Giriş Yap</Link>
-            </p>
+                        <div className="text-center mt-3 border-top pt-3">
+                            <small className="text-muted">Zaten hesabın var mı?</small> <br />
+                            <Link to="/login" className="fw-bold text-decoration-none text-primary">Giriş Yap</Link>
+                        </div>
+                    </Card.Body>
+                </Card>
+            </Container>
         </div>
     );
 }

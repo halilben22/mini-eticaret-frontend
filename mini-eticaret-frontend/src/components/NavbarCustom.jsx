@@ -1,31 +1,46 @@
-import { useState } from 'react'; // State ekle
-import { Navbar, Container, Nav, Button, Badge, Form } from 'react-bootstrap'; // Form ekle
-import { Link, useNavigate, useLocation } from 'react-router-dom'; // useLocation ekle
-import '../components/NavbarCustom.css'; // CSS dosyasını içe aktar
+import { useState, useEffect } from 'react';
+import { Navbar, Container, Nav, Button, Badge } from 'react-bootstrap';
+import { Link, useNavigate } from 'react-router-dom';
+import '../components/NavbarCustom.css';
+
+// --- EKSİK OLAN PARÇA BU: Token Çözücü ---
+const parseJwt = (token) => {
+  try {
+    return JSON.parse(atob(token.split('.')[1]));
+  } catch (e) {
+    return null;
+  }
+};
 
 export default function NavbarCustom() {
-  const token = localStorage.getItem("token");
   const navigate = useNavigate();
-  const location = useLocation(); // Şu anki sayfa adresi
 
-  // Arama metni için state
-  const [searchTerm, setSearchTerm] = useState("");
+  // State'ler
+  const [userRole, setUserRole] = useState(null);
+  const token = localStorage.getItem("token");
+
+  // Sayfa yüklendiğinde veya token değiştiğinde Rolü bul
+  useEffect(() => {
+    if (token) {
+      const decoded = parseJwt(token);
+      if (decoded && decoded.role) {
+        setUserRole(decoded.role.toLowerCase()); // Büyük/küçük harf sorunu olmasın diye
+      }
+    } else {
+      setUserRole(null);
+    }
+  }, [token]);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     navigate("/login");
-  };
-
-  // Arama Yapılınca Çalışacak Fonksiyon
-  const handleSearch = (e) => {
-    e.preventDefault(); // Sayfa yenilenmesin
-    // URL'i güncelle: /?name=aranan_kelime
-    navigate(`/?name=${searchTerm}`);
+    window.location.reload(); // State'leri temizlemek için
   };
 
   return (
     <Navbar expand="lg" className="custom-navbar py-3" variant="dark">
-      <Container fluid>
+      <Container>
+        {/* LOGO (SOLDA) */}
         <Navbar.Brand as={Link} to="/" className="custom-brand">
           🛒 MiniShop
         </Navbar.Brand>
@@ -33,25 +48,9 @@ export default function NavbarCustom() {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
 
         <Navbar.Collapse id="basic-navbar-nav">
+          {/* LİNKLER (SAĞDA - ms-auto ile ittik) */}
+          <Nav className="ms-auto align-items-center">
 
-          {/* --- YENİ EKLENEN KISIM: ARAMA KUTUSU --- */}
-          {/* Sadece Ana Sayfada ("/") isek göster */}
-          {location.pathname === "/" && (
-            <Form className="d-flex mx-auto my-2 my-lg-0" style={{ maxWidth: "900px", width: "100%" }} onSubmit={handleSearch}>
-              <Form.Control
-                type="search"
-                placeholder="Ürün ara..."
-                className="me-2"
-                aria-label="Search"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-              <Button variant="outline-light" type="submit">Ara</Button>
-            </Form>
-          )}
-          {/* ---------------------------------------- */}
-
-          <Nav className={location.pathname === "/" ? "ms-0" : "ms-auto"}>
             <Nav.Link as={Link} to="/" className="nav-link-custom mx-2">Ana Sayfa</Nav.Link>
 
             {!token ? (
@@ -67,6 +66,19 @@ export default function NavbarCustom() {
                   Sepetim <Badge bg="light" text="dark" pill>New</Badge>
                 </Nav.Link>
                 <Nav.Link as={Link} to="/orders" className="nav-link-custom mx-2">Siparişlerim</Nav.Link>
+
+                {/* --- ADMIN BUTONU BURADA --- */}
+                {userRole === "admin" && (
+                  <Button
+                    as={Link}
+                    to="/admin"
+                    variant="outline-warning"
+                    size="sm"
+                    className="ms-2 fw-bold border-2"
+                  >
+                    👑 Admin Panel
+                  </Button>
+                )}
 
                 <Button variant="danger" size="sm" onClick={handleLogout} className="ms-3">
                   Çıkış

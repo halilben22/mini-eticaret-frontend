@@ -1,130 +1,150 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import { Container, Row, Col, Card, Button, Form, Spinner, Image } from 'react-bootstrap';
+import { toast } from 'react-toastify';
 
 export default function CartPage() {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [address, setAddress] = useState(""); // Adres için state
-  
+  const [address, setAddress] = useState("");
+
   const navigate = useNavigate();
 
-  // Sepeti Çekme Fonksiyonu
   const fetchCart = () => {
     const token = localStorage.getItem("token");
-    if (!token) {
-        navigate("/login");
-        return;
-    }
+    if (!token) { navigate("/login"); return; }
 
     axios.get("http://localhost:8080/cart", {
       headers: { Authorization: `Bearer ${token}` }
     })
-    .then((response) => {
-      // Backend yapımız: { data: { items: [...] } }
-      // Eğer sepet boşsa items null gelebilir, boş dizi verelim
-      const items = response.data.data.items || [];
-      setCartItems(items);
-      setLoading(false);
-    })
-    .catch((error) => {
-      console.error("Sepet çekilemedi:", error);
-      setLoading(false);
-    });
+      .then((response) => {
+        const items = response.data.data.items || [];
+        setCartItems(items);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error(error);
+        setLoading(false);
+      });
   };
 
-  useEffect(() => {
-    fetchCart();
-  }, []);
+  useEffect(() => { fetchCart(); }, []);
 
-  // --- SİPARİŞİ TAMAMLA (CHECKOUT) ---
- const handleCheckout = async () => {
-    if (!address) {
-      alert("Lütfen bir teslimat adresi girin!");
-      return;
-    }
+  const handleCheckout = async () => {
+    if (!address) { toast.warning("Lütfen adres girin!"); return; }
     const token = localStorage.getItem("token");
 
     try {
-      // 1. Siparişi Oluştur (Sepet Silinmez)
-      // DİKKAT: Endpoint değişti -> /create-order
-      const response = await axios.post(
-        "http://localhost:8080/create-order",
+      const response = await axios.post("http://localhost:8080/create-order",
         { shipping_address: address },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      // 2. Ödeme Sayfasına Yönlendir (Verileri taşıyarak)
       const { order_id, total } = response.data;
-      
-      // navigate fonksiyonu ile state (veri) taşıyabiliriz
-      navigate("/payment", { 
-        state: { orderId: order_id, totalAmount: total } 
-      });
+      navigate("/payment", { state: { orderId: order_id, totalAmount: total } });
 
     } catch (error) {
-      console.error("Sipariş hatası:", error);
-      alert("Hata: " + (error.response?.data?.error || "Bilinmeyen hata"));
+      toast.error(error.response?.data?.error || "Hata oluştu");
     }
   };
 
-  // Sepet Toplamını Hesapla
-  const totalPrice = cartItems.reduce((acc, item) => {
-    return acc + (item.product.price * item.quantity);
-  }, 0);
+  // Sepet Toplamı
+  const totalPrice = cartItems.reduce((acc, item) => acc + (item.product.price * item.quantity), 0);
 
-  if (loading) return <h3>Sepet Yükleniyor...</h3>;
+  if (loading) return <Container className="mt-5 text-center"><Spinner animation="border" /></Container>;
 
   return (
-    <div style={{ padding: "20px", maxWidth: "800px", margin: "0 auto" }}>
-      <h1>🛒 Sepetim</h1>
+    <Container className="py-5">
+      <h2 className="mb-4 fw-bold text-secondary">🛒 Sepetim ({cartItems.length} Ürün)</h2>
 
       {cartItems.length === 0 ? (
-        <p>Sepetinizde ürün yok.</p>
+        <div className="text-center py-5 bg-white rounded shadow-sm">
+          <h3 className="text-muted">Sepetinizde ürün yok. 😔</h3>
+          <Button as={Link} to="/" variant="primary" className="mt-3">Alışverişe Başla</Button>
+        </div>
       ) : (
-        <>
-          {/* Ürün Listesi */}
-          <table style={{ width: "100%", borderCollapse: "collapse", marginBottom: "20px" }}>
-            <thead>
-              <tr style={{ borderBottom: "2px solid #ddd", textAlign: "left" }}>
-                <th style={{ padding: "10px" }}>Ürün</th>
-                <th>Adet</th>
-                <th>Fiyat</th>
-                <th>Toplam</th>
-              </tr>
-            </thead>
-            <tbody>
-              {cartItems.map((item) => (
-                <tr key={item.id} style={{ borderBottom: "1px solid #eee" }}>
-                  <td style={{ padding: "10px" }}>{item.product.name}</td>
-                  <td>{item.quantity}</td>
-                  <td>{item.product.price} TL</td>
-                  <td>{item.product.price * item.quantity} TL</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <Row>
+          {/* --- SOL TARA: ÜRÜN LİSTESİ --- */}
+          <Col lg={8}>
+            {cartItems.map((item) => (
+              <Card key={item.id} className="mb-3 border-0 shadow-sm">
+                <Card.Body>
+                  <Row className="align-items-center">
+                    {/* Resim */}
+                    <Col xs={4} md={2}>
+                      <Image
+                        src={item.product.image_url ? `http://localhost:8080${item.product.image_url}` : "https://via.placeholder.com/150"}
+                        fluid rounded
+                        style={{ height: "80px", objectFit: "cover" }}
+                      />
+                    </Col>
 
-          {/* Adres ve Ödeme Alanı */}
-          <div style={{ background: "#f9f9f9", padding: "20px", borderRadius: "10px" }}>
-            <h3>Toplam Tutar: {totalPrice} TL</h3>
-            
-            <textarea
-              placeholder="Teslimat Adresini Giriniz..."
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-              style={{ width: "100%", height: "80px", padding: "10px", marginBottom: "10px" }}
-            />
+                    {/* Bilgiler */}
+                    <Col xs={8} md={6}>
+                      <h6 className="mb-1 text-truncate">
+                        <Link to={`/product/${item.product_id}`} className="text-decoration-none text-dark">
+                          {item.product.name}
+                        </Link>
+                      </h6>
+                      <small className="text-muted">Birim Fiyat: {item.product.price} ₺</small>
+                    </Col>
 
-            <button 
-              onClick={handleCheckout}
-              style={{ padding: "15px 30px", backgroundColor: "#28a745", color: "white", border: "none", fontSize: "16px", cursor: "pointer", width: "100%" }}
-            >
-              Siparişi Onayla ve Satın Al ✅
-            </button>
-          </div>
-        </>
+                    {/* Adet ve Toplam (Mobilde alt satıra geçebilir) */}
+                    <Col xs={12} md={4} className="mt-3 mt-md-0 d-flex justify-content-between align-items-center">
+                      <div className="d-flex align-items-center border rounded px-2">
+                        <small className="fw-bold me-2">Adet:</small>
+                        <span>{item.quantity}</span>
+                      </div>
+                      <span className="fw-bold text-primary fs-5">
+                        {(item.product.price * item.quantity).toFixed(2)} ₺
+                      </span>
+                    </Col>
+                  </Row>
+                </Card.Body>
+              </Card>
+            ))}
+          </Col>
+
+          {/* --- SAĞ TARA: SİPARİŞ ÖZETİ (Sticky) --- */}
+          <Col lg={4}>
+            <Card className="border-0 shadow-sm sticky-top" style={{ top: "100px" }}>
+              <Card.Header className="bg-white fw-bold py-3">Sipariş Özeti</Card.Header>
+              <Card.Body>
+                <div className="d-flex justify-content-between mb-2">
+                  <span>Ara Toplam</span>
+                  <span>{totalPrice.toFixed(2)} ₺</span>
+                </div>
+                <div className="d-flex justify-content-between mb-3 text-success">
+                  <span>Kargo</span>
+                  <span>Bedava</span>
+                </div>
+                <hr />
+                <div className="d-flex justify-content-between mb-4 fs-4 fw-bold">
+                  <span>Toplam</span>
+                  <span className="text-primary">{totalPrice.toFixed(2)} ₺</span>
+                </div>
+
+                <Form.Group className="mb-3">
+                  <Form.Label className="small fw-bold text-muted">Teslimat Adresi</Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    rows={3}
+                    placeholder="Adresinizi giriniz..."
+                    value={address}
+                    onChange={(e) => setAddress(e.target.value)}
+                    style={{ resize: "none" }}
+                  />
+                </Form.Group>
+
+                <Button variant="success" size="lg" className="w-100 fw-bold" onClick={handleCheckout}>
+                  Sepeti Onayla ✅
+                </Button>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
       )}
-    </div>
+    </Container>
   );
 }
