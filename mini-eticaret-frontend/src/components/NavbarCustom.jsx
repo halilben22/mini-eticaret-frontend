@@ -72,13 +72,16 @@ export default function NavbarCustom() {
                   <Button
                     as={Link}
                     to="/admin"
-                    variant="outline-warning"
+                    variant="outline-light"
                     size="sm"
-                    className="ms-2 fw-bold border-2"
+                    className="ms-2 fw-bold border-1"
                   >
                     👑 Admin Panel
                   </Button>
                 )}
+                <span>
+                  <strong className="ms-3"></strong>
+                </span>
 
                 <Button variant="danger" size="sm" onClick={handleLogout} className="ms-3">
                   Çıkış
