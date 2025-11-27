@@ -1,34 +1,61 @@
 
 import renderStars from "../../helper/StarRatingHelper";
-
+import { Row, Col, Badge, Image, Card } from 'react-bootstrap';
 export default function ProductInfo({ product, averageRating, totalReviews }) {
-
     return (
-        <div style={{ display: "flex", gap: "20px", marginBottom: "40px", padding: "20px", background: "white", borderRadius: "10px", boxShadow: "0 2px 5px rgba(0,0,0,0.05)" }}>
-            <img
-                src={product.image_url ? `http://localhost:8080${product.image_url}` : "https://via.placeholder.com/300"}
-                alt={product.name}
-                style={{ width: "300px", height: "300px", objectFit: "cover", borderRadius: "10px" }}
-            />
+        <Card className="shadow-sm border-0 mb-5 overflow-hidden">
+            <Card.Body className="p-4">
+                <Row>
+                    {/* SOL TARA: Ürün Resmi */}
+                    <Col md={6} className="d-flex align-items-center justify-content-center bg-light rounded-3 p-3">
+                        <Image
+                            src={product.image_url ? `http://localhost:8080${product.image_url}` : "https://via.placeholder.com/500"}
+                            alt={product.name}
+                            fluid // Resmi kapsayıcıya sığdırır (Responsive)
+                            style={{ maxHeight: "400px", objectFit: "contain" }}
+                        />
+                    </Col>
 
-            <div>
-                <h1>{product.name}</h1>
-                <h2 style={{ color: "#28a745", fontSize: "28px", margin: "10px 0" }}>{product.price} TL</h2>
-                <p style={{ lineHeight: "1.6", color: "#555" }}>{product.description}</p>
+                    {/* SAĞ TARAF: Bilgiler */}
+                    <Col md={6} className="mt-4 mt-md-0 d-flex flex-column justify-content-center">
 
-                <div style={{ marginTop: "20px", padding: "10px", background: "#f8f9fa", borderRadius: "8px", display: "inline-block" }}>
-                    <strong>Stok Durumu: </strong>
-                    <span style={{ color: product.stock_quantity > 0 ? "green" : "red" }}>
-                        {product.stock_quantity > 0 ? `${product.stock_quantity} Adet` : "Tükendi"}
-                    </span>
-                </div>
+                        {/* Stok Rozeti */}
+                        <div className="mb-2">
+                            {product.stock_quantity > 0 ? (
+                                <Badge bg="success" className="px-3 py-2">Stokta Var</Badge>
+                            ) : (
+                                <Badge bg="danger" className="px-3 py-2">Tükendi</Badge>
+                            )}
+                        </div>
 
-                <div style={{ display: "flex", alignItems: "center", gap: "10px", marginTop: "20px" }}>
-                    <div style={{ fontSize: "30px", fontWeight: "bold", color: "#333" }}>{averageRating.toFixed(1)}</div>
-                    <div>{renderStars(Math.round(averageRating))}</div>
-                    <div style={{ color: "#888" }}>({totalReviews} Değerlendirme)</div>
-                </div>
-            </div>
-        </div>
+                        <h1 className="fw-bold text-dark mb-3">{product.name}</h1>
+
+                        {/* Yıldızlar ve Yorum Sayısı */}
+                        <div className="d-flex align-items-center gap-2 mb-4">
+                            <div className="d-flex">{renderStars(Math.round(averageRating))}</div>
+                            <span className="text-muted small">({totalReviews} Değerlendirme)</span>
+                            <span className="fw-bold text-warning ms-2">{averageRating.toFixed(1)}</span>
+                        </div>
+
+                        {/* Fiyat */}
+                        <h2 className="text-primary display-6 fw-bold mb-4">
+                            {product.price} <span className="fs-4 text-dark">₺</span>
+                        </h2>
+
+                        <p className="text-secondary lead fs-6">
+                            {product.description}
+                        </p>
+
+                        <div className="mt-4 p-3 bg-light rounded border border-light">
+                            <small className="text-muted">
+                                🚚 <strong>Ücretsiz Kargo:</strong> 500 TL ve üzeri alışverişlerde kargo bedava.
+                                <br />
+                                🛡️ <strong>Güvenli Ödeme:</strong> 256-bit SSL koruması.
+                            </small>
+                        </div>
+                    </Col>
+                </Row>
+            </Card.Body>
+        </Card>
     );
 } 

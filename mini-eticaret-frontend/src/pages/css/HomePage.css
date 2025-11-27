@@ -1,0 +1,27 @@
+.product-card {
+    transition: transform 0.3s, box-shadow 0.3s;
+    border: none;
+    border-radius: 12px;
+    overflow: hidden;
+    height: 100%;
+    /* Kartların boyu eşit olsun */
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+}
+
+.card-img-top {
+    height: 200px;
+    object-fit: cover;
+    /* Resim bozulmadan sığsın */
+    background-color: #f8f9fa;
+}
+
+.price-tag {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: #0d6efd;
+    /* Bootstrap Primary Color */
+}

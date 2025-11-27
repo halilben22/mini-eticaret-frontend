@@ -1,28 +1,44 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate, Link } from "react-router-dom"; // Yönlendirme için
+import { Link, useNavigate, useSearchParams } from "react-router-dom"; // useSearchParams Ekle
+import { Container, Row, Col, Card, Button, Spinner } from 'react-bootstrap';
+import { toast } from 'react-toastify';
+import './css/HomePage.css';
 
 export default function HomePage() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // URL'deki parametreleri okumak için (Örn: ?name=telefon)
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  // Ürünleri Çek
   useEffect(() => {
-    axios.get("http://localhost:8080/products")
-      .then((response) => {
-        const gelenVeri = response.data.data || response.data || [];
-        setProducts(gelenVeri);
+    setLoading(true);
+
+    // URL'den 'name' parametresini al
+    const searchQuery = searchParams.get("name");
+
+    // API Adresini Dinamik Yap
+    let url = "http://localhost:8080/products";
+
+    // Eğer arama yapılmışsa URL'e ekle
+    if (searchQuery) {
+      url += `?name=${searchQuery}`;
+    }
+
+    axios.get(url)
+      .then((res) => {
+        setProducts(res.data.data || []);
         setLoading(false);
       })
-      .catch((error) => {
-        console.error("Ürünler çekilemedi:", error);
+      .catch((err) => {
+        console.error(err);
         setLoading(false);
       });
-  }, []);
 
-  // --- YENİ: SEPETE EKLEME FONKSİYONU ---
+  }, [searchParams]); // DİKKAT: searchParams değişince (arama yapılınca) useEffect tekrar çalışsın!
+
   const addToCart = async (productId) => {
     // 1. Token var mı kontrol et
     const token = localStorage.getItem("token");
@@ -56,45 +72,65 @@ export default function HomePage() {
     }
   };
 
-  if (loading) return <h3>Yükleniyor...</h3>;
+  if (loading) return (
+    <Container className="text-center mt-5">
+      <Spinner animation="border" variant="primary" />
+    </Container>
+  );
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h1>Ürünler</h1>
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "20px" }}>
+    <Container className="py-5">
+      <div className="d-flex justify-content-between align-items-center mb-5">
+        <h2 className="fw-bold text-secondary">
+          {searchParams.get("name") ? `🔍 "${searchParams.get("name")}" Sonuçları` : "✨ Vitrin Fırsatları"}
+        </h2>
 
-        {Array.isArray(products) && products.map((product) => (
-          <div key={product.id} style={{ border: "1px solid #ccc", padding: "10px", width: "220px", borderRadius: "8px", boxShadow: "0 2px 5px rgba(0,0,0,0.1)" }}>
-            <Link to={`/product/${product.id}`} style={{ textDecoration: "none", color: "inherit" }}>
-              {/* Resim Alanı */}
-              {product.image_url ? (
-
-                <img
-                  src={`http://localhost:8080${product.image_url}`}
-                  alt={product.name}
-                  style={{ width: "100%", height: "150px", objectFit: "cover", borderRadius: "5px" }}
-                />
-              ) : (
-                <div style={{ height: "150px", background: "#f0f0f0", display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "5px", color: "#888" }}>
-                  Resim Yok
-                </div>
-              )}
-
-              <h3>{product.name}</h3>
-            </Link>
-            <p style={{ fontSize: "18px", fontWeight: "bold", color: "#2c3e50" }}>{product.price} TL</p>
-
-            {/* --- BUTONA TIKLAMA OLAYI EKLENDİ --- */}
-            <button
-              onClick={() => addToCart(product.id)}
-              style={{ width: "100%", padding: "10px", backgroundColor: "#28a745", color: "white", border: "none", borderRadius: "5px", cursor: "pointer" }}
-            >
-              Sepete Ekle 🛒
-            </button>
-
-          </div>
-        ))}
+        {/* Arama yapıldıysa "Tümünü Göster" butonu çıkar */}
+        {searchParams.get("name") && (
+          <Button variant="outline-secondary" onClick={() => navigate("/")}>
+            ❌ Aramayı Temizle
+          </Button>
+        )}
       </div>
-    </div>
+
+      {products.length === 0 ? (
+        <div className="text-center py-5">
+          <h3>Üzgünüz, aradığınız kriterlere uygun ürün bulunamadı. 😔</h3>
+          <Button variant="primary" className="mt-3" onClick={() => navigate("/")}>Tüm Ürünleri Gör</Button>
+        </div>
+      ) : (
+        <Row>
+          {/* ... Harita (Map) Döngüsü Aynı Kalsın ... */}
+          {products.map((product) => (
+            <Col key={product.id} xs={12} sm={6} md={4} lg={3} className="mb-4">
+              {/* ... Card Kodları Aynı ... */}
+              <Card className="product-card shadow-sm">
+                <Link to={`/product/${product.id}`} className="text-decoration-none text-dark">
+                  <Card.Img variant="top" src={product.image_url ? `http://localhost:8080${product.image_url}` : "..."} className="card-img-top" />
+                </Link>
+                <Card.Body className="d-flex flex-column">
+                  <Card.Title className="text-truncate">{product.name}</Card.Title>
+                  <div className="mt-auto d-flex justify-content-between align-items-center">
+                    <span className="price-tag">{product.price} ₺</span>
+                    <Button variant="outline-primary" size="sm" onClick={() => addToCart(product.id)}>Sepete Ekle</Button>
+                    {/* ... Buton ... */}
+                  </div>
+                </Card.Body>
+              </Card>
+            </Col>
+          ))}
+        </Row>
+      )}
+    </Container>
   );
 }
+
+
+
+
+
+
+
+
+
+
