@@ -1,0 +1,6 @@
+body {
+    background-color: #f8f9fa;
+    /* Bootstrap gri tonu */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 100vh;
+}

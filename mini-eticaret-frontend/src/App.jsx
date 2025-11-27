@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route, Link, useNavigate } from "react-router-do
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import CartPage from "./pages/CartPage";
-import Navbar from "./navigation/Navbar";
+import NavbarCustom from "./components/NavbarCustom";
 import PaymentPage from "./pages/PaymentPage";
 import OrdersPage from "./pages/OrdersPage";
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -14,7 +14,7 @@ import RegisterPage from "./pages/RegisterPage";
 function App() {
   return (
     <BrowserRouter>
-      <Navbar />
+      <NavbarCustom />
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/register" element={<RegisterPage />} />
