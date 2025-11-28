@@ -7,7 +7,11 @@ import { toast } from 'react-toastify';
 export default function CartPage() {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [address, setAddress] = useState("");
+  const [addrForm, setAddrForm] = useState({
+    city: "",
+    district: "",
+    detail: "" // Sokak, Mahalle, Kapı No vb.
+  });
 
   const navigate = useNavigate();
 
@@ -32,12 +36,20 @@ export default function CartPage() {
   useEffect(() => { fetchCart(); }, []);
 
   const handleCheckout = async () => {
-    if (!address) { toast.warning("Lütfen adres girin!"); return; }
+    // 1. Validasyon: Hepsi dolu mu?
+    if (!addrForm.city || !addrForm.district || !addrForm.detail) {
+      toast.warning("Lütfen adres bilgilerini tam giriniz!");
+      return;
+    }
+
+    // 2. Adresi Birleştir (Backend tek string bekliyor)
+    const combinedAddress = `${addrForm.detail}, ${addrForm.district} / ${addrForm.city}`;
+
     const token = localStorage.getItem("token");
 
     try {
       const response = await axios.post("http://localhost:8080/create-order",
-        { shipping_address: address },
+        { shipping_address: combinedAddress }, // <--- Birleşmiş hali gönderiyoruz
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
@@ -56,7 +68,7 @@ export default function CartPage() {
 
   return (
     <Container className="py-5">
-      <h2 className="mb-4 fw-bold text-secondary">🛒 Sepetim ({cartItems.length} Ürün)</h2>
+      <h2 className="mb-4 fw-bold text-secondary">Sepetim ({cartItems.length} Ürün)</h2>
 
       {cartItems.length === 0 ? (
         <div className="text-center py-5 bg-white rounded shadow-sm">
@@ -125,17 +137,39 @@ export default function CartPage() {
                   <span className="text-primary">{totalPrice.toFixed(2)} ₺</span>
                 </div>
 
-                <Form.Group className="mb-3">
+                {/* --- ADRES FORMU BAŞLANGICI --- */}
+                <div className="mb-3">
                   <Form.Label className="small fw-bold text-muted">Teslimat Adresi</Form.Label>
+
+                  <Row className="mb-2">
+                    <Col>
+                      <Form.Control
+                        type="text"
+                        placeholder="İl"
+                        value={addrForm.city}
+                        onChange={(e) => setAddrForm({ ...addrForm, city: e.target.value })}
+                      />
+                    </Col>
+                    <Col>
+                      <Form.Control
+                        type="text"
+                        placeholder="İlçe"
+                        value={addrForm.district}
+                        onChange={(e) => setAddrForm({ ...addrForm, district: e.target.value })}
+                      />
+                    </Col>
+                  </Row>
+
                   <Form.Control
                     as="textarea"
-                    rows={3}
-                    placeholder="Adresinizi giriniz..."
-                    value={address}
-                    onChange={(e) => setAddress(e.target.value)}
+                    rows={2}
+                    placeholder="Mahalle, Sokak, Bina No, Daire..."
+                    value={addrForm.detail}
+                    onChange={(e) => setAddrForm({ ...addrForm, detail: e.target.value })}
                     style={{ resize: "none" }}
                   />
-                </Form.Group>
+                </div>
+                {/* --- ADRES FORMU BİTİŞİ --- */}
 
                 <Button variant="success" size="lg" className="w-100 fw-bold" onClick={handleCheckout}>
                   Sepeti Onayla ✅

@@ -42,7 +42,7 @@ export default function NavbarCustom() {
       <Container>
         {/* LOGO (SOLDA) */}
         <Navbar.Brand as={Link} to="/" className="custom-brand">
-          🛒 MiniShop
+          MiniShop
         </Navbar.Brand>
 
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -72,7 +72,7 @@ export default function NavbarCustom() {
                   <Button
                     as={Link}
                     to="/admin"
-                    variant="outline-light"
+                    variant="light"
                     size="sm"
                     className="ms-2 fw-bold border-1"
                   >

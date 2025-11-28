@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import { Container, Row, Col, Card, Table, Form, Badge, Spinner } from 'react-bootstrap';
+import { useNavigate, Link } from "react-router-dom";
+import { Container, Row, Col, Card, Table, Form, Badge, Spinner, Button } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 
 export default function AdminDashboard() {
@@ -58,11 +58,11 @@ export default function AdminDashboard() {
     // Duruma Göre Renkli Badge Döndüren Yardımcı Fonksiyon
     const getStatusBadge = (status) => {
         switch (status) {
-            case 'paid': return <Badge bg="success">Ödendi ✅</Badge>;
-            case 'shipped': return <Badge bg="info" text="dark">Kargolandı 🚛</Badge>;
-            case 'delivered': return <Badge bg="primary">Teslim Edildi 📦</Badge>;
-            case 'waiting_payment': return <Badge bg="warning" text="dark">Ödeme Bekliyor ⏳</Badge>;
-            case 'cancelled': return <Badge bg="danger">İptal ❌</Badge>;
+            case 'paid': return <Badge bg="success">Ödendi </Badge>;
+            case 'shipped': return <Badge bg="info" text="dark">Kargolandı </Badge>;
+            case 'delivered': return <Badge bg="primary">Teslim Edildi </Badge>;
+            case 'waiting_payment': return <Badge bg="warning" text="dark">Ödeme Bekliyor</Badge>;
+            case 'cancelled': return <Badge bg="danger">İptal </Badge>;
             default: return <Badge bg="secondary">{status}</Badge>;
         }
     };
@@ -77,9 +77,16 @@ export default function AdminDashboard() {
     return (
         <Container className="py-5">
             <div className="d-flex justify-content-between align-items-center mb-4">
-                <h2 className="fw-bold text-dark">👮‍♂️ Admin Paneli</h2>
+                <h2 className="fw-bold text-dark">Admin Paneli</h2>
                 <Badge bg="dark" className="p-2">Admin Modu</Badge>
             </div>
+            <Link to="/admin/add-product" className="mb-3">
+                <Button variant="success" className="fw-bold shadow-sm mb-3">
+                    Yeni Ürün Ekle
+                </Button>
+            </Link>
+
+
 
             {/* --- İSTATİSTİK KARTLARI --- */}
             <Row className="mb-5 g-4">
@@ -111,7 +118,7 @@ export default function AdminDashboard() {
             {/* --- SİPARİŞ TABLOSU --- */}
             <Card className="border-0 shadow-sm">
                 <Card.Header className="bg-white py-3">
-                    <h5 className="mb-0 fw-bold text-secondary">📋 Son Siparişler</h5>
+                    <h5 className="mb-0 fw-bold text-secondary"> Son Siparişler</h5>
                 </Card.Header>
                 <Card.Body className="p-0">
                     <Table responsive hover striped className="mb-0 align-middle">
@@ -141,7 +148,7 @@ export default function AdminDashboard() {
                                             value={order.status}
                                             onChange={(e) => handleStatusChange(order.id, e.target.value)}
                                             style={{ maxWidth: "180px", cursor: "pointer" }}
-                                            className="shadow-sm border-secondary"
+                                            className="shadow-sm"
                                         >
                                             <option value="waiting_payment">Ödeme Bekliyor</option>
                                             <option value="paid">Ödendi</option>
@@ -161,6 +168,6 @@ export default function AdminDashboard() {
                     </div>
                 )}
             </Card>
-        </Container>
+        </Container >
     );
 }

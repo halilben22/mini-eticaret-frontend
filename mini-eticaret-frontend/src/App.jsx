@@ -9,7 +9,7 @@ import OrdersPage from "./pages/OrdersPage";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import ProductDetailPage from "./pages/ProductDetailPage";
 import RegisterPage from "./pages/RegisterPage";
-
+import AddProductPage from "./pages/admin/AddProductPage";
 
 function App() {
   return (
@@ -24,6 +24,7 @@ function App() {
         <Route path="/product/:id" element={<ProductDetailPage />} />
         <Route path="/orders" element={<OrdersPage />} />
         <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/admin/add-product" element={<AddProductPage />} />
       </Routes>
     </BrowserRouter>
   );

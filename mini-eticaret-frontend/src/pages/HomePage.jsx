@@ -72,7 +72,7 @@ export default function HomePage() {
       {/* Sadece arama yapılmadıysa göster */}
       {!searchParams.get("name") && topProducts.length > 0 && (
         <div className="mb-5">
-          <h3 className="fw-bold text-secondary mb-3">🔥 Haftanın Yıldızları</h3>
+          <h3 className="fw-bold text-secondary mb-3"> Haftanın Yıldızları</h3>
           <Carousel className="shadow-lg rounded-3 overflow-hidden">
             {topProducts.map((prod) => (
               <Carousel.Item key={prod.id} interval={3000}>
@@ -101,7 +101,7 @@ export default function HomePage() {
       {/* --- BAŞLIK VE ARAMA TEMİZLEME --- */}
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2 className="fw-bold text-secondary">
-          {searchParams.get("name") ? `🔍 "${searchParams.get("name")}" Sonuçları` : "✨ Vitrin Fırsatları"}
+          {searchParams.get("name") ? `🔍 "${searchParams.get("name")}" Sonuçları` : " Vitrin"}
         </h2>
 
         {searchParams.get("name") && (
@@ -114,7 +114,7 @@ export default function HomePage() {
       {/* --- ÜRÜN LİSTESİ (TAM EKRAN) --- */}
       {products.length === 0 ? (
         <div className="text-center py-5 bg-white rounded shadow-sm">
-          <h3>😔 Üzgünüz, ürün bulunamadı.</h3>
+          <h3> Üzgünüz, ürün bulunamadı.</h3>
           <p>Farklı bir arama terimi deneyin.</p>
           <Button variant="primary" onClick={() => navigate("/")}>Tüm Ürünleri Gör</Button>
         </div>
