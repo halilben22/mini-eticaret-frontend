@@ -51,7 +51,7 @@ export default function AddProductPage() {
         }
 
         try {
-            await axios.post("http://localhost:8080/products", formData, {
+            await axios.post("http://localhost:8080/admin/add-product", formData, {
                 headers: {
                     "Authorization": `Bearer ${token}`,
                     "Content-Type": "multipart/form-data" // ÇOK ÖNEMLİ!
@@ -72,7 +72,7 @@ export default function AddProductPage() {
     return (
         <Container className="py-5" style={{ maxWidth: "600px" }}>
             <div className="d-flex justify-content-between align-items-center mb-4">
-                <h2 className="fw-bold text-secondary">✨ Yeni Ürün Ekle</h2>
+                <h2 className="fw-bold text-secondary">Yeni Ürün Ekle</h2>
                 <Button as={Link} to="/admin" variant="outline-secondary" size="sm">Geri Dön</Button>
             </div>
 

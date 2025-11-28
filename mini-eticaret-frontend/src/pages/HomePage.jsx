@@ -4,6 +4,7 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Container, Row, Col, Card, Button, Spinner, Carousel, Badge } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 import './css/HomePage.css';
+import ProductSkeleton from "../components/product/ProductSkeleton";
 
 export default function HomePage() {
   const [products, setProducts] = useState([]);
@@ -61,9 +62,23 @@ export default function HomePage() {
     }
   }
 
-  if (loading) return (
-    <Container className="text-center mt-5"><Spinner animation="border" variant="primary" /></Container>
-  );
+  if (loading) {
+    return (
+      <Container className="py-5">
+        {/* Başlık için de bir iskelet koyabilirsin veya sabit kalabilir */}
+        <h2 className="fw-bold text-secondary mb-4">Yükleniyor...</h2>
+
+        <Row>
+          {/* 8 tane iskelet kartı oluşturup ekrana basıyoruz */}
+          {[...Array(8)].map((_, index) => (
+            <Col key={index} xs={12} sm={6} md={4} lg={3} className="mb-4">
+              <ProductSkeleton />
+            </Col>
+          ))}
+        </Row>
+      </Container>
+    );
+  }
 
   return (
     <Container className="py-5">
