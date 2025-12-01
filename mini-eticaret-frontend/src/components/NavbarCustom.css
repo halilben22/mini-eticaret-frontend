@@ -1,25 +1,40 @@
-/* Navbar arkaplanını biraz daha koyu ve şık yapalım */
-.custom-navbar {
-    background: linear-gradient(90deg, #1a2a6c, #b21f1f, #fdbb2d);
-    /* Örnek modern gradient */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+/* src/components/MyNavbar.css */
 
+.custom-navbar {
+    /* Amazon Tarzı Koyu Arkaplan - Turuncuyu patlatır */
+    background-color: #131921 !important;
+
+    /* VEYA Turuncu Gradyan İstersen bunu kullan: */
+    /* background: linear-gradient(90deg, #ff9900, #ff6600) !important; */
+
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .custom-brand {
-    font-weight: bold;
-    font-size: 1.5rem;
+    font-weight: 900;
+    font-size: 1.6rem;
     color: white !important;
-
+    letter-spacing: 2px;
 }
 
+/* Linkler */
 .nav-link-custom {
     color: rgba(255, 255, 255, 0.9) !important;
     font-weight: 500;
     transition: color 0.3s;
+    margin: 0 5px;
 }
 
 .nav-link-custom:hover {
-    color: #ebf698 !important;
-    /* Sarı hover efekti */
+    color: #ff9900 !important;
+    /* Hover olunca Açık Turuncu */
+}
+
+/* Mobilde açılan menü çizgileri beyaz olsun */
+.navbar-toggler {
+    border-color: rgba(255, 255, 255, 0.5) !important;
+}
+
+.navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255, 255, 255, 0.8)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
 }

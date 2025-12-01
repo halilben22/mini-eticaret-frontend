@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import OrdersSkeleton from "../components/skeletons/OrdersPageSkeleton";
 
 export default function OrdersPage() {
   const [orders, setOrders] = useState([]);
@@ -17,7 +18,11 @@ export default function OrdersPage() {
         const data = response.data.data || [];
         // Yeniden eskiye sıralayalım (Opsiyonel)
         setOrders(data.reverse());
-        setLoading(false);
+
+        setTimeout(() => {
+          setLoading(false);
+        }, 500);
+
       })
       .catch((error) => {
         console.error("Siparişler çekilemedi:", error);
@@ -39,11 +44,11 @@ export default function OrdersPage() {
     }
   };
 
-  if (loading) return <h3>Siparişler yükleniyor...</h3>;
+  if (loading) return <OrdersSkeleton />
 
   return (
-    <div style={{ padding: "20px", maxWidth: "800px", margin: "0 auto" }}>
-      <h1>📦 Siparişlerim</h1>
+    <div style={{ padding: "20px", maxWidth: "800px", minHeight: "75vh", margin: "0 auto" }}>
+      <h1>Siparişlerim</h1>
 
       {orders.length === 0 ? (
         <p>Henüz siparişiniz yok.</p>

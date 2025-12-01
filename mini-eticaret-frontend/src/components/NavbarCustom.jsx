@@ -42,7 +42,7 @@ export default function NavbarCustom() {
       <Container>
         {/* LOGO (SOLDA) */}
         <Navbar.Brand as={Link} to="/" className="custom-brand">
-          MiniShop
+          Arella
         </Navbar.Brand>
 
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -55,8 +55,10 @@ export default function NavbarCustom() {
 
             {!token ? (
               <>
+
                 <Nav.Link as={Link} to="/login" className="nav-link-custom mx-2">Giriş Yap</Nav.Link>
-                <Button as={Link} to="/register" variant="warning" size="sm" className="ms-2 fw-bold">
+
+                <Button as={Link} to="/register" variant="primary" size="sm" className="ms-2 fw-bold">
                   Kayıt Ol
                 </Button>
               </>

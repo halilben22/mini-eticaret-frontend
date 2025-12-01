@@ -1,6 +1,85 @@
+/* src/index.css */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+    /* --- BİZİM RENKLERİMİZ --- */
+    --main-orange: #ff6600;
+    --dark-orange: #e65100;
+    --light-orange: #fff3e0;
+    --text-dark: #232f3e;
+
+    /* --- BOOTSTRAP DEĞİŞKENLERİNİ EZİYORUZ (OVERRIDE) --- */
+    /* Artık 'text-primary', 'bg-primary', 'border-primary' kullanan HER YER Turuncu olacak */
+    --bs-primary: #ff6600 !important;
+    --bs-primary-rgb: 255, 102, 0 !important;
+
+    /* Link renklerini de güncelleyelim */
+    --bs-link-color: #232f3e;
+    --bs-link-hover-color: #ff6600;
+}
+
 body {
-    background-color: #f8f9fa;
-    /* Bootstrap gri tonu */
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    min-height: 100vh;
+    font-family: 'Inter', sans-serif;
+    background-color: #f4f4f4;
+    color: var(--text-dark);
+}
+
+/* --- EKSTRA GARANTİ İÇİN SINIFLAR --- */
+
+/* Yazılar (Fiyatlar vb.) */
+.text-primary {
+    color: var(--main-orange) !important;
+}
+
+/* Butonlar */
+.btn-primary {
+    background-color: var(--main-orange) !important;
+    border-color: var(--main-orange) !important;
+}
+
+.btn-primary:hover,
+.btn-primary:active,
+.btn-primary:focus {
+    background-color: var(--dark-orange) !important;
+    border-color: var(--dark-orange) !important;
+}
+
+.btn-outline-primary {
+    color: var(--main-orange) !important;
+    border-color: var(--main-orange) !important;
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--main-orange) !important;
+    color: white !important;
+    border-color: var(--main-orange) !important;
+}
+
+/* Fiyat Etiketi Özel Sınıfı */
+.price-tag {
+    color: var(--main-orange) !important;
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+
+/* Kart Hover Efekti */
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    border-color: var(--light-orange) !important;
+    /* Çerçeve hafif turuncu olsun */
+}
+
+/* Footer Link Hover Efekti */
+.hover-link:hover {
+    color: #ff6600 !important;
+    /* Bizim turuncu rengimiz */
+    padding-left: 5px;
+    /* Hafif sağa kayma efekti */
+    transition: all 0.3s ease;
+}
+
+.hover-text-white:hover {
+    color: white !important;
+    cursor: pointer;
 }

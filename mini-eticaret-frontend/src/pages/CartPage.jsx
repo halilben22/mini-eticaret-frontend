@@ -3,6 +3,7 @@ import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import { Container, Row, Col, Card, Button, Form, Spinner, Image } from 'react-bootstrap';
 import { toast } from 'react-toastify';
+import CartSkeleton from "../components/skeletons/CartSkeleton";
 
 export default function CartPage() {
   const [cartItems, setCartItems] = useState([]);
@@ -25,7 +26,10 @@ export default function CartPage() {
       .then((response) => {
         const items = response.data.data.items || [];
         setCartItems(items);
-        setLoading(false);
+
+        setTimeout(() => {
+          setLoading(false);
+        }, 500);
       })
       .catch((error) => {
         console.error(error);
@@ -36,20 +40,15 @@ export default function CartPage() {
   useEffect(() => { fetchCart(); }, []);
 
   const handleCheckout = async () => {
-    // 1. Validasyon: Hepsi dolu mu?
-    if (!addrForm.city || !addrForm.district || !addrForm.detail) {
-      toast.warning("Lütfen adres bilgilerini tam giriniz!");
-      return;
-    }
 
-    // 2. Adresi Birleştir (Backend tek string bekliyor)
+
     const combinedAddress = `${addrForm.detail}, ${addrForm.district} / ${addrForm.city}`;
-
     const token = localStorage.getItem("token");
 
     try {
+      // 👇 İŞTE TAM BURADA ÇAĞIRIYORSUN 👇
       const response = await axios.post("http://localhost:8080/create-order",
-        { shipping_address: combinedAddress }, // <--- Birleşmiş hali gönderiyoruz
+        { shipping_address: combinedAddress },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
@@ -63,9 +62,7 @@ export default function CartPage() {
 
   // Sepet Toplamı
   const totalPrice = cartItems.reduce((acc, item) => acc + (item.product.price * item.quantity), 0);
-
-  if (loading) return <Container className="mt-5 text-center"><Spinner animation="border" /></Container>;
-
+  if (loading) return <CartSkeleton />
   return (
     <Container className="py-5">
       <h2 className="mb-4 fw-bold text-secondary">Sepetim ({cartItems.length} Ürün)</h2>
@@ -172,7 +169,7 @@ export default function CartPage() {
                 {/* --- ADRES FORMU BİTİŞİ --- */}
 
                 <Button variant="success" size="lg" className="w-100 fw-bold" onClick={handleCheckout}>
-                  Sepeti Onayla ✅
+                  Sepeti Onayla
                 </Button>
               </Card.Body>
             </Card>

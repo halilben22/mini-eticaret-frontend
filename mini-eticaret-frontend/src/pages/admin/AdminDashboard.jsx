@@ -75,7 +75,7 @@ export default function AdminDashboard() {
     );
 
     return (
-        <Container className="py-5">
+        <Container className="py-5" style={{ minHeight: "75vh" }}>
             <div className="d-flex justify-content-between align-items-center mb-4">
                 <h2 className="fw-bold text-dark">Admin Paneli</h2>
                 <Badge bg="dark" className="p-2">Admin Modu</Badge>
