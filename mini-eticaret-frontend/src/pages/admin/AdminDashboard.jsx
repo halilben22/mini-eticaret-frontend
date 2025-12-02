@@ -81,7 +81,7 @@ export default function AdminDashboard() {
                 <Badge bg="dark" className="p-2">Admin Modu</Badge>
             </div>
             <Link to="/admin/add-product" className="mb-3">
-                <Button variant="success" className="fw-bold shadow-sm mb-3">
+                <Button variant="inline-primary" className="fw-bold shadow-sm mb-3 text-white" >
                     Yeni Ürün Ekle
                 </Button>
             </Link>
@@ -92,7 +92,7 @@ export default function AdminDashboard() {
             <Row className="mb-5 g-4">
                 {/* Ciro Kartı */}
                 <Col md={6}>
-                    <Card className="border-0 shadow-sm h-100 text-white" style={{ background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)" }}>
+                    <Card className="border-0 shadow-sm h-100 text-white" style={{ background: "#ff6600" }}>
                         <Card.Body className="text-center d-flex flex-column justify-content-center p-4">
                             <h5 className="text-white-50 text-uppercase letter-spacing-1">Toplam Ciro</h5>
                             <h1 className="display-4 fw-bold mb-0">
@@ -104,7 +104,7 @@ export default function AdminDashboard() {
 
                 {/* Sipariş Sayısı Kartı */}
                 <Col md={6}>
-                    <Card className="border-0 shadow-sm h-100 text-white" style={{ background: "linear-gradient(135deg, #11998e 0%, #38ef7d 100%)" }}>
+                    <Card className="border-0 shadow-sm h-100 text-white" style={{ background: "#ff6600" }}>
                         <Card.Body className="text-center d-flex flex-column justify-content-center p-4">
                             <h5 className="text-white-50 text-uppercase letter-spacing-1">Toplam Sipariş</h5>
                             <h1 className="display-4 fw-bold mb-0">

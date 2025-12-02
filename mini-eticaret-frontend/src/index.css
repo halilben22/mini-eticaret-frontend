@@ -44,8 +44,16 @@ body {
     border-color: var(--dark-orange) !important;
 }
 
+.btn-inline-primary {
+    color: var(--main-orange) !important;
+    background-color: var(--main-orange) !important;
+    text-decoration: #f4f4f4 !important;
+    border-color: var(--main-orange) !important;
+}
+
 .btn-outline-primary {
     color: var(--main-orange) !important;
+
     border-color: var(--main-orange) !important;
 }
 
@@ -53,6 +61,11 @@ body {
     background-color: var(--main-orange) !important;
     color: white !important;
     border-color: var(--main-orange) !important;
+}
+
+.btn-inline-primary:hover {
+    background-color: var(--dark-orange) !important;
+    border-color: var(--dark-orange) !important;
 }
 
 /* Fiyat Etiketi Özel Sınıfı */

@@ -109,7 +109,7 @@ export default function HomePage() {
           { product_id: selectedProduct.id, quantity: quantity },
           { headers: { Authorization: `Bearer ${token}` } }
         );
-        toast.success(`Sepet güncellendi: ${quantity} adet ✅`);
+        toast.success(`Sepet güncellendi: ${quantity} adet `);
       } else {
         // SENARYO 2: Ürün sepette yok -> EKLE (POST)
         await axios.post("http://localhost:8080/cart",
@@ -207,7 +207,7 @@ export default function HomePage() {
                 <div className="mt-auto d-flex justify-content-between align-items-center pt-3">
                   <span className="price-tag text-primary fw-bold">{product.price} ₺</span>
                   <Button variant="outline-primary" size="sm" onClick={() => openAddModal(product)}>
-                    + Ekle
+                    Sepete Ekle
                   </Button>
                 </div>
               </Card.Body>
