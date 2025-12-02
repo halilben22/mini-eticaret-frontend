@@ -1,0 +1,38 @@
+/* Sipariş Listesi Kapsayıcısı */
+.orders-scroll-container {
+    /* max-height: 70vh; -> Ekran yüksekliğinin %70'i kadar yer kapla.
+       Fazlası olursa scroll aç.
+    */
+    height: 70vh;
+    overflow-y: auto;
+    /* Dikey kaydırmayı aç */
+    overflow-x: hidden;
+    /* Yatay kaydırmayı kapat */
+
+    padding-right: 10px;
+    /* Scrollbar içeriğe yapışmasın */
+    padding-bottom: 20px;
+}
+
+/* --- SCROLLBAR GÜZELLEŞTİRME (Chrome, Edge, Safari) --- */
+.orders-scroll-container::-webkit-scrollbar {
+    width: 8px;
+    /* Çubuğun genişliği */
+}
+
+.orders-scroll-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    /* Çubuğun yolu */
+    border-radius: 4px;
+}
+
+.orders-scroll-container::-webkit-scrollbar-thumb {
+    background: #ccc;
+    /* Çubuğun kendisi */
+    border-radius: 4px;
+}
+
+.orders-scroll-container::-webkit-scrollbar-thumb:hover {
+    background: #ff6600;
+    /* Üzerine gelince turuncu olsun */
+}

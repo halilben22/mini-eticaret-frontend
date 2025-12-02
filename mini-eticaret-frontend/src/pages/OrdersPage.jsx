@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import OrdersSkeleton from "../components/skeletons/OrdersPageSkeleton";
-
+import { Container, Card, Badge, Spinner, Row, Col } from 'react-bootstrap';
+import { toast } from 'react-toastify';
+import './css/OrdersPage.css'; // <--- CSS dosyasını import etmeyi unutma!
+import OrdersSkeleton from '../components/skeletons/OrdersPageSkeleton.jsx';
 export default function OrdersPage() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -14,15 +16,12 @@ export default function OrdersPage() {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then((response) => {
-        // Backend yapısı: { data: [...] }
         const data = response.data.data || [];
-        // Yeniden eskiye sıralayalım (Opsiyonel)
         setOrders(data.reverse());
 
         setTimeout(() => {
           setLoading(false);
-        }, 500);
-
+        }, 500); // Yükleme efektini göstermek için küçük bir gecikme ekleyelim
       })
       .catch((error) => {
         console.error("Siparişler çekilemedi:", error);
@@ -30,60 +29,70 @@ export default function OrdersPage() {
       });
   }, []);
 
-  // Sipariş Durumuna Göre Renk Ayarı
   const getStatusBadge = (status) => {
     switch (status) {
-      case "paid":
-        return <span style={{ backgroundColor: "#d4edda", color: "#155724", padding: "5px 10px", borderRadius: "15px", fontWeight: "bold" }}>Ödendi ✅</span>;
-      case "waiting_payment":
-        return <span style={{ backgroundColor: "#fff3cd", color: "#856404", padding: "5px 10px", borderRadius: "15px", fontWeight: "bold" }}>Ödeme Bekliyor ⏳</span>;
-      case "shipped":
-        return <span style={{ backgroundColor: "#cce5ff", color: "#004085", padding: "5px 10px", borderRadius: "15px", fontWeight: "bold" }}>Kargolandı 🚛</span>;
-      default:
-        return <span>{status}</span>;
+      case "paid": return <Badge bg="success" className="p-2">Ödendi ✅</Badge>;
+      case "waiting_payment": return <Badge bg="warning" text="dark" className="p-2">Ödeme Bekliyor ⏳</Badge>;
+      case "shipped": return <Badge bg="info" className="p-2">Kargolandı </Badge>;
+      case "delivered": return <Badge bg="primary" className="p-2">Teslim Edildi </Badge>;
+      default: return <Badge bg="secondary" className="p-2">{status}</Badge>;
     }
   };
 
-  if (loading) return <OrdersSkeleton />
+  if (loading) return (
+    <OrdersSkeleton></OrdersSkeleton>
+  );
 
   return (
-    <div style={{ padding: "20px", maxWidth: "800px", minHeight: "75vh", margin: "0 auto" }}>
-      <h1>Siparişlerim</h1>
+    // 'h-100' ve 'd-flex flex-column' ile sayfayı tam boyuta yayıyoruz
+    <Container className="py-4 h-100 d-flex flex-column">
+      <h2 className="mb-4 fw-bold text-secondary"> Sipariş Geçmişim</h2>
 
       {orders.length === 0 ? (
-        <p>Henüz siparişiniz yok.</p>
-      ) : (
-        <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-          {orders.map((order) => (
-            <div key={order.id} style={{ border: "1px solid #ddd", borderRadius: "10px", padding: "20px", boxShadow: "0 2px 5px rgba(0,0,0,0.05)" }}>
-
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid #eee", paddingBottom: "10px", marginBottom: "10px" }}>
-                <div>
-                  <strong>Sipariş No: #{order.id}</strong>
-                  <div style={{ fontSize: "12px", color: "#888" }}>{new Date(order.created_at).toLocaleString()}</div>
-                </div>
-                {getStatusBadge(order.status)}
-              </div>
-
-              {/* Sipariş İçeriği (Backend'de Preload yaptıysak gelir) */}
-              <div>
-                {order.order_items?.map((item) => (
-                  console.log(item),
-                  <div key={item.id} style={{ display: "flex", justifyContent: "space-between", marginBottom: "5px" }}>
-
-                    <span>{item.quantity}x {item.product.name}</span>
-                    <span>{item.unit_price * item.quantity} TL</span>
-                  </div>
-                ))}
-              </div>
-
-              <div style={{ borderTop: "1px solid #eee", paddingTop: "10px", marginTop: "10px", textAlign: "right", fontSize: "18px", fontWeight: "bold" }}>
-                Toplam: {order.total_amount} TL
-              </div>
-            </div>
-          ))}
+        <div className="text-center p-5 bg-white rounded shadow-sm">
+          <h4>Henüz siparişiniz yok.</h4>
+          <p>İlk siparişinizi vermek için ana sayfaya göz atın.</p>
         </div>
+      ) : (
+
+        /* --- KAYDIRILABİLİR ALAN BAŞLANGICI --- */
+        <div className="orders-scroll-container">
+          <Row>
+            {orders.map((order) => (
+              <Col md={6} lg={4} key={order.id} className="mb-4">
+                <Card className="shadow-sm border-0 h-100" style={{ background: "#fff" }}>
+                  <Card.Header className="d-flex justify-content-between align-items-center bg-white border-bottom-0 pt-3">
+                    <span className="fw-bold text-primary">#{order.id}</span>
+                    <small className="text-muted">{new Date(order.created_at).toLocaleDateString()}</small>
+                  </Card.Header>
+
+                  <Card.Body>
+                    <div className="mb-3 text-center">
+                      {getStatusBadge(order.status)}
+                    </div>
+
+                    <div className="bg-light p-3 rounded mb-3" style={{ height: "120px", overflowY: "auto" }}>
+                      <small className="fw-bold text-muted d-block mb-2">İÇERİK:</small>
+                      {order.order_items?.map((item) => (
+                        <div key={item.id} className="d-flex justify-content-between small mb-1 border-bottom pb-1">
+                          <span className="text-truncate" style={{ maxWidth: "150px" }}>{item.quantity}x {item.product.name}</span>
+                          <span className="fw-bold">{item.unit_price} ₺</span>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="d-flex justify-content-between align-items-center mt-auto border-top pt-3">
+                      <span className="text-muted small">Toplam Tutar:</span>
+                      <span className="fs-5 fw-bold text-dark">{order.total_amount} ₺</span>
+                    </div>
+                  </Card.Body>
+                </Card>
+              </Col>
+            ))}
+          </Row>
+        </div>
+        /* --- KAYDIRILABİLİR ALAN BİTİŞİ --- */
       )}
-    </div>
+    </Container>
   );
 }

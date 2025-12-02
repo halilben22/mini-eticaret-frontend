@@ -1,0 +1,43 @@
+/* Tabloyu Kapsayan Kutu */
+.admin-table-scroll {
+    max-height: 300px;
+    /* Yaklaşık 10-12 satır gösterir, gerisini saklar */
+    overflow-y: auto;
+    /* Dikey kaydırma aç */
+    overflow-x: auto;
+    /* Mobilde yatay kaydırma aç */
+}
+
+/* --- STICKY HEADER (BAŞLIKLARI SABİTLEME) --- */
+/* Bu kısım çok önemli: Tabloyu kaydırsan bile başlıklar üstte yapışık kalır */
+.admin-table-scroll thead th {
+    position: sticky;
+    top: 0;
+    background-color: #f8f9fa;
+    /* Bootstrap light gray */
+    z-index: 10;
+    /* İçeriğin üstünde kalsın */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    /* Hafif gölge */
+}
+
+/* --- SCROLLBAR GÜZELLEŞTİRME (Turuncu Tema) --- */
+.admin-table-scroll::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.admin-table-scroll::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.admin-table-scroll::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 4px;
+}
+
+.admin-table-scroll::-webkit-scrollbar-thumb:hover {
+    background: #ff6600;
+    /* Turuncu */
+}

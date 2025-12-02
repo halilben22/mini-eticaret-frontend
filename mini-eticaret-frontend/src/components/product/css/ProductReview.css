@@ -1,0 +1,35 @@
+/* Yorum Listesi Kapsayıcısı */
+.reviews-scroll-container {
+    max-height: 500px;
+    /* Yaklaşık 4-5 yorum gösterir, sonrası kayar */
+    overflow-y: auto;
+    /* Dikey kaydırmayı aç */
+    overflow-x: hidden;
+    padding-right: 10px;
+    /* Scrollbar içeriğe yapışmasın */
+
+    /* İçerik kenarlardan taşmasın diye yumuşak bir sınır */
+    border: 1px solid #f0f0f0;
+    border-radius: 8px;
+    background-color: #fafafa;
+}
+
+/* --- SCROLLBAR GÜZELLEŞTİRME (Turuncu Tema) --- */
+.reviews-scroll-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.reviews-scroll-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.reviews-scroll-container::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 4px;
+}
+
+.reviews-scroll-container::-webkit-scrollbar-thumb:hover {
+    background: #ff6600;
+    /* Turuncu */
+}

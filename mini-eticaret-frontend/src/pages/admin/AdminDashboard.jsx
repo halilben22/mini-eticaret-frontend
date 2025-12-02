@@ -3,6 +3,7 @@ import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import { Container, Row, Col, Card, Table, Form, Badge, Spinner, Button } from 'react-bootstrap';
 import { toast } from 'react-toastify';
+import '../admin/css/AdminDashnoardPage.css';
 
 export default function AdminDashboard() {
     const [stats, setStats] = useState({ total_orders: 0, total_revenue: 0 });
@@ -75,7 +76,7 @@ export default function AdminDashboard() {
     );
 
     return (
-        <Container className="py-5" style={{ minHeight: "75vh" }}>
+        <Container className="py-5" style={{ minHeight: "50vh" }}>
             <div className="d-flex justify-content-between align-items-center mb-4">
                 <h2 className="fw-bold text-dark">Admin Paneli</h2>
                 <Badge bg="dark" className="p-2">Admin Modu</Badge>
@@ -118,49 +119,52 @@ export default function AdminDashboard() {
             {/* --- SİPARİŞ TABLOSU --- */}
             <Card className="border-0 shadow-sm">
                 <Card.Header className="bg-white py-3">
-                    <h5 className="mb-0 fw-bold text-secondary"> Son Siparişler</h5>
+                    <h5 className="mb-0 fw-bold text-secondary">Son Siparişler</h5>
                 </Card.Header>
                 <Card.Body className="p-0">
-                    <Table responsive hover striped className="mb-0 align-middle">
-                        <thead className="bg-light">
-                            <tr>
-                                <th className="ps-4">ID</th>
-                                <th>Müşteri ID</th>
-                                <th>Tutar</th>
-                                <th>Durum</th>
-                                <th>İşlem (Durum Değiştir)</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {orders.map((order) => (
-                                <tr key={order.id}>
-                                    <td className="ps-4 fw-bold">#{order.id}</td>
-                                    <td className="text-muted">User-{order.user_id}</td>
-                                    <td className="fw-bold text-primary">
-                                        {order.total_amount.toLocaleString('tr-TR', { minimumFractionDigits: 2 })} ₺
-                                    </td>
-                                    <td>
-                                        {getStatusBadge(order.status)}
-                                    </td>
-                                    <td>
-                                        <Form.Select
-                                            size="sm"
-                                            value={order.status}
-                                            onChange={(e) => handleStatusChange(order.id, e.target.value)}
-                                            style={{ maxWidth: "180px", cursor: "pointer" }}
-                                            className="shadow-sm"
-                                        >
-                                            <option value="waiting_payment">Ödeme Bekliyor</option>
-                                            <option value="paid">Ödendi</option>
-                                            <option value="shipped">Kargolandı</option>
-                                            <option value="delivered">Teslim Edildi</option>
-                                            <option value="cancelled">İptal</option>
-                                        </Form.Select>
-                                    </td>
+
+                    <div className="admin-table-scroll">
+                        <Table responsive hover striped className="mb-0 align-middle">
+                            <thead className="bg-light">
+                                <tr>
+                                    <th className="ps-4">ID</th>
+                                    <th>Müşteri ID</th>
+                                    <th>Tutar</th>
+                                    <th>Durum</th>
+                                    <th>İşlem (Durum Değiştir)</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </Table>
+                            </thead>
+                            <tbody>
+                                {orders.map((order) => (
+                                    <tr key={order.id}>
+                                        <td className="ps-4 fw-bold">#{order.id}</td>
+                                        <td className="text-muted">User-{order.user_id}</td>
+                                        <td className="fw-bold text-primary">
+                                            {order.total_amount.toLocaleString('tr-TR', { minimumFractionDigits: 2 })} ₺
+                                        </td>
+                                        <td>
+                                            {getStatusBadge(order.status)}
+                                        </td>
+                                        <td>
+                                            <Form.Select
+                                                size="sm"
+                                                value={order.status}
+                                                onChange={(e) => handleStatusChange(order.id, e.target.value)}
+                                                style={{ maxWidth: "180px", cursor: "pointer" }}
+                                                className="shadow-sm"
+                                            >
+                                                <option value="waiting_payment">Ödeme Bekliyor</option>
+                                                <option value="paid">Ödendi</option>
+                                                <option value="shipped">Kargolandı</option>
+                                                <option value="delivered">Teslim Edildi</option>
+                                                <option value="cancelled">İptal</option>
+                                            </Form.Select>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </Table>
+                    </div>
                 </Card.Body>
                 {orders.length === 0 && (
                     <div className="text-center p-5 text-muted">

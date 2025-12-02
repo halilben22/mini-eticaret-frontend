@@ -3,6 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import renderStars from "../../helper/StarRatingHelper";
 import { Form, Button, ListGroup, Card, Row, Col, ProgressBar } from 'react-bootstrap';
+import '../product/css/ProductReview.css';
 export default function ProductReviews({ productId, reviews, onReviewAdded }) {
 
 
@@ -44,25 +45,27 @@ export default function ProductReviews({ productId, reviews, onReviewAdded }) {
         <Row>
             {/* SOL: Yorum Listesi */}
             <Col lg={7} className="mb-4">
-                <h4 className="mb-4 fw-bold text-secondary">📝 Müşteri Yorumları ({reviews.length})</h4>
+                <h4 className="mb-4 fw-bold text-secondary">Müşteri Yorumları ({reviews.length})</h4>
 
                 {reviews.length === 0 ? (
                     <div className="text-center p-5 bg-light rounded text-muted">
                         Henüz yorum yapılmamış. İlk yorumu sen yap!
                     </div>
                 ) : (
-                    <ListGroup variant="flush" className="shadow-sm rounded bg-white">
-                        {reviews.map((review) => (
-                            <ListGroup.Item key={review.id} className="p-4 border-bottom">
-                                <div className="d-flex justify-content-between align-items-center mb-2">
-                                    <h6 className="mb-0 fw-bold text-dark">{review.user?.full_name || "Kullanıcı"}</h6>
-                                    <small className="text-muted">{new Date(review.created_at).toLocaleDateString()}</small>
-                                </div>
-                                <div className="mb-2">{renderStars(review.rating)}</div>
-                                <p className="text-secondary mb-0">{review.comment}</p>
-                            </ListGroup.Item>
-                        ))}
-                    </ListGroup>
+                    <div className="reviews-scroll-container">
+                        <ListGroup variant="flush" className="shadow-sm rounded bg-white">
+                            {reviews.map((review) => (
+                                <ListGroup.Item key={review.id} className="p-4 border-bottom">
+                                    <div className="d-flex justify-content-between align-items-center mb-2">
+                                        <h6 className="mb-0 fw-bold text-dark">{review.user?.full_name || "Kullanıcı"}</h6>
+                                        <small className="text-muted">{new Date(review.created_at).toLocaleDateString()}</small>
+                                    </div>
+                                    <div className="mb-2">{renderStars(review.rating)}</div>
+                                    <p className="text-secondary mb-0">{review.comment}</p>
+                                </ListGroup.Item>
+                            ))}
+                        </ListGroup>
+                    </div>
                 )}
             </Col>
 

@@ -76,7 +76,7 @@ export default function ProductDetailPage() {
                 { headers: { Authorization: `Bearer ${token}` } }
             );
 
-            toast.success(`${quantity} adet ürün sepete eklendi! 🛒`);
+            toast.success(`${quantity} adet ürün sepete eklendi! `);
 
         } catch (error) {
             console.error(error);
