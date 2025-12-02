@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { Container, Row, Col, Card, Button, Spinner, Carousel, Badge, Modal } from 'react-bootstrap';
+// Pagination eklendi 👇
+import { Container, Row, Col, Card, Button, Spinner, Carousel, Badge, Modal, Pagination } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 import './css/HomePage.css';
 import ProductSkeleton from "../components/skeletons/ProductSkeleton";
@@ -11,6 +12,11 @@ export default function HomePage() {
   const [topProducts, setTopProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // --- PAGINATION STATE'LERİ (YENİ) ---
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  // ------------------------------------
+
   // Sepetteki ürünleri tutacağımız State
   const [cartItems, setCartItems] = useState([]);
 
@@ -18,26 +24,35 @@ export default function HomePage() {
   const [showModal, setShowModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
-  // quantity: Ekranda görünen sayı
-  // initialQty: Modal açıldığında sepette kaç tane vardı? (Farkı hesaplamak için)
   const [quantity, setQuantity] = useState(0);
   const [initialQty, setInitialQty] = useState(0);
-  // -----------------------------
 
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
-  // 1. Ürünleri ve SEPETİ Çekme Fonksiyonu
+  // 1. Verileri Çekme Fonksiyonu
   const fetchAllData = async () => {
+    setLoading(true);
     try {
       const searchQuery = searchParams.get("name");
-      let url = "http://localhost:8080/products";
-      if (searchQuery) url += `?name=${searchQuery}`;
+
+      // --- URL GÜNCELLEMESİ (SAYFALAMA İÇİN) ---
+      // Varsayılan olarak sayfa ve limiti ekliyoruz
+      let url = `http://localhost:8080/products?page=${currentPage}&limit=8`;
+
+      // Arama varsa URL'in sonuna &name=... olarak ekliyoruz
+      if (searchQuery) url += `&name=${searchQuery}`;
 
       // A. Ürünleri Çek
       const prodRes = await axios.get(url);
       setProducts(prodRes.data.data || []);
 
+      // Meta verisinden toplam sayfa sayısını al (Backend'de bu yapıyı kurmuştuk)
+      if (prodRes.data.meta) {
+        setTotalPages(prodRes.data.meta.total_pages);
+      }
+
+      // Slider sadece 1. sayfada ve arama yoksa görünsün istersen buraya if koyabilirsin
       const topRes = await axios.get("http://localhost:8080/products/top-rated");
       setTopProducts(topRes.data.data || []);
 
@@ -48,14 +63,13 @@ export default function HomePage() {
           const cartRes = await axios.get("http://localhost:8080/cart", {
             headers: { Authorization: `Bearer ${token}` }
           });
-          // Sepetteki itemları kaydet
           setCartItems(cartRes.data.data.items || []);
         } catch (err) {
           console.log("Sepet çekilemedi veya boş");
         }
       }
 
-      setTimeout(() => { setLoading(false); }, 500); // Yükleme efektini göstermek için küçük bir gecikme
+      setTimeout(() => { setLoading(false); }, 500);
 
     } catch (err) {
       console.error(err);
@@ -63,11 +77,19 @@ export default function HomePage() {
     }
   };
 
+  // useEffect hem arama değişince hem de sayfa (currentPage) değişince çalışmalı
   useEffect(() => {
     fetchAllData();
-  }, [searchParams]); // URL değişince tekrar çalışır
+    // Sayfa değişince en yukarı kaydır
+    window.scrollTo(0, 0);
+  }, [searchParams, currentPage]);
 
-  // 2. ADIM: PENCEREYİ AÇMA (Sepet Kontrolü ile)
+  // Sayfa Değiştirme Yardımcısı
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  // 2. ADIM: PENCEREYİ AÇMA
   const openAddModal = (product) => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -76,42 +98,29 @@ export default function HomePage() {
       return;
     }
 
-    // Sepette bu üründen var mı? Bulalım.
     const existingItem = cartItems.find(item => item.product_id === product.id);
-
-    // Varsa onun adedini, yoksa 1'i başlangıç yap
     const currentQty = existingItem ? existingItem.quantity : 1;
-
-    // Eğer sepette varsa başlangıç değeri o olsun, yoksa 1 olsun.
-    // Ancak sepette varsa, mantıken kullanıcı "artırmak" ister.
-    // Eğer sepette hiç yoksa 1 ile başlarız.
-    // Eğer sepette 5 tane varsa, modal 5 ile açılır.
 
     setSelectedProduct(product);
     setQuantity(currentQty);
-    setInitialQty(existingItem ? existingItem.quantity : 0); // Başlangıç miktarını kaydet
+    setInitialQty(existingItem ? existingItem.quantity : 0);
 
     setShowModal(true);
   };
 
-  // 3. ADIM: ONAYLAMA (Farkı Hesaplama)
-  // 3. ADIM: ONAYLAMA (GÜNCELLEME VEYA EKLEME)
+  // 3. ADIM: ONAYLAMA
   const handleConfirmAddToCart = async () => {
     if (!selectedProduct) return;
-
     const token = localStorage.getItem("token");
 
     try {
       if (initialQty > 0) {
-        // SENARYO 1: Ürün sepette zaten var -> GÜNCELLE (PUT)
-        // quantity state'i modalda seçilen son sayıdır (Örn: 5)
         await axios.put("http://localhost:8080/cart",
           { product_id: selectedProduct.id, quantity: quantity },
           { headers: { Authorization: `Bearer ${token}` } }
         );
-        toast.success(`Sepet güncellendi: ${quantity} adet `);
+        toast.success(`Sepet güncellendi: ${quantity} adet ✅`);
       } else {
-        // SENARYO 2: Ürün sepette yok -> EKLE (POST)
         await axios.post("http://localhost:8080/cart",
           { product_id: selectedProduct.id, quantity: quantity },
           { headers: { Authorization: `Bearer ${token}` } }
@@ -119,7 +128,6 @@ export default function HomePage() {
         toast.success(`${quantity} adet sepete eklendi! 🛒`);
       }
 
-      // Verileri tazele
       fetchAllData();
       setShowModal(false);
 
@@ -137,17 +145,13 @@ export default function HomePage() {
   };
 
   const decreaseQty = () => {
-    // 1'in altına inmesin
-    if (quantity > 0) setQuantity(prev => prev - 1);
+    if (quantity > 1) setQuantity(prev => prev - 1);
   };
 
   if (loading) {
     return (
       <Container className="py-5">
-
-
         <Row>
-          {/* 8 tane iskelet kartı oluşturup ekrana basıyoruz */}
           {[...Array(8)].map((_, index) => (
             <Col key={index} xs={12} sm={6} md={4} lg={3} className="mb-4">
               <ProductSkeleton />
@@ -159,10 +163,10 @@ export default function HomePage() {
   }
 
   return (
-    <Container className="py-5" style={{ minHeight: "75vh" }}>
+    <Container className="py-5 d-flex flex-column flex-grow-1" style={{ minHeight: "95vh" }}>
 
-      {/* SLIDER KISMI (Aynı kalıyor) */}
-      {!searchParams.get("name") && topProducts.length > 0 && (
+      {/* SLIDER KISMI (Sadece arama yoksa ve 1. sayfadaysak gösterelim - Opsiyonel) */}
+      {!searchParams.get("name") && currentPage === 1 && topProducts.length > 0 && (
         <div className="mb-5">
           <h3 className="fw-bold text-secondary mb-3">Haftanın Yıldızları</h3>
           <Carousel className="shadow-lg rounded-3 overflow-hidden">
@@ -183,21 +187,27 @@ export default function HomePage() {
         </div>
       )}
 
-      {/* ÜRÜN LİSTESİ */}
+      {/* ÜRÜN LİSTESİ BAŞLIK */}
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2 className="fw-bold text-secondary">
-          {searchParams.get("name") ? `🔍 "${searchParams.get("name")}" Sonuçları` : " Ürünleri inceleyin"}
+          {searchParams.get("name") ? ` "${searchParams.get("name")}" Sonuçları` : " Vitrin Fırsatları"}
         </h2>
         {searchParams.get("name") && <Button variant="outline-danger" size="sm" onClick={() => navigate("/")}>Aramayı Temizle ❌</Button>}
       </div>
 
-      <Row>
+      {/* ÜRÜN KARTLARI */}
+      <Row className="mb-auto">
         {products.map((product) => (
           <Col key={product.id} xs={12} sm={6} md={4} lg={3} className="mb-4">
             <Card className="product-card shadow-sm h-100 border-0">
               <Link to={`/product/${product.id}`} className="text-decoration-none text-dark">
                 <div className="position-relative">
-                  <Card.Img variant="top" src={product.image_url ? `http://localhost:8080${product.image_url}` : "https://via.placeholder.com/300"} className="card-img-top" style={{ height: "200px", objectFit: "cover" }} />
+                  <Card.Img
+                    variant="top"
+                    src={product.image_url ? `http://localhost:8080${product.image_url}` : "https://via.placeholder.com/300"}
+                    className="card-img-top"
+                    style={{ height: "200px", objectFit: "cover" }}
+                  />
                 </div>
               </Link>
               <Card.Body className="d-flex flex-column">
@@ -216,11 +226,36 @@ export default function HomePage() {
         ))}
       </Row>
 
-      {/* --- SEPETE EKLEME PENCERESİ (MODAL) --- */}
+      {/* PAGINATION */}
+      {totalPages > 1 && (
+        <div className="d-flex justify-content-center mt-auto pt-4">
+          <Pagination>
+            <Pagination.Prev onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1} />
+
+            {[...Array(totalPages)].map((_, i) => (
+              <Pagination.Item
+                key={i + 1}
+                active={i + 1 === currentPage}
+                onClick={() => handlePageChange(i + 1)}
+              >
+                {i + 1}
+              </Pagination.Item>
+            ))}
+
+            <Pagination.Next onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages} />
+          </Pagination>
+        </div>
+      )}
+      {/* ------------------------------------------------ */}
+
+      {/* MODAL */}
       <Modal show={showModal} onHide={() => setShowModal(false)} centered>
         <Modal.Header closeButton className="border-0">
-          <Modal.Title className="fw-bold text-primary">Sepete Ekle / Güncelle</Modal.Title>
+          <Modal.Title className="fw-bold text-primary">
+            {initialQty > 0 ? "Sepeti Güncelle" : "Sepete Ekle"}
+          </Modal.Title>
         </Modal.Header>
+
         <Modal.Body className="text-center">
           {selectedProduct && (
             <>
@@ -232,7 +267,6 @@ export default function HomePage() {
               <h4 className="fw-bold">{selectedProduct.name}</h4>
               <p className="text-muted">{selectedProduct.price} ₺</p>
 
-              {/* Mevcut Durum Bilgisi */}
               {initialQty > 0 && (
                 <div className="alert alert-info py-2 small">
                   Sepetinizde bu üründen <strong>{initialQty}</strong> adet var.
@@ -240,20 +274,19 @@ export default function HomePage() {
               )}
 
               <div className="d-flex justify-content-center align-items-center mt-3">
-                <Button variant="outline-secondary" onClick={decreaseQty} disabled={quantity <= 0}>-</Button>
+                <Button variant="outline-secondary" onClick={decreaseQty} disabled={quantity <= 1}>-</Button>
                 <span className="mx-3 fs-4 fw-bold" style={{ minWidth: "30px" }}>{quantity}</span>
                 <Button variant="outline-secondary" onClick={increaseQty} disabled={quantity >= selectedProduct.stock_quantity}>+</Button>
               </div>
-
+              <small className="text-muted mt-2 d-block">Stok: {selectedProduct.stock_quantity}</small>
             </>
           )}
         </Modal.Body>
+
         <Modal.Footer className="border-0 justify-content-center">
-          <Button variant="secondary" onClick={() => setShowModal(false)}>
-            Vazgeç
-          </Button>
-          <Button variant="primary" inactive={initialQty > 0} className="px-4 fw-bold" onClick={handleConfirmAddToCart}>
-            {quantity > 0 ? "Sepeti güncelle" : "Sepete Ekle ✅"}
+          <Button variant="secondary" onClick={() => setShowModal(false)}>Vazgeç</Button>
+          <Button variant="primary" className="px-4 fw-bold" onClick={handleConfirmAddToCart}>
+            {initialQty > 0 ? "Sepeti Güncelle 🔄" : "Sepete Ekle ✅"}
           </Button>
         </Modal.Footer>
       </Modal>

@@ -23,7 +23,7 @@ function App() {
         autoClose={3000}
         theme="colored"
       />
-      <div style={{ flex: 1 }}>
+      <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/register" element={<RegisterPage />} />
