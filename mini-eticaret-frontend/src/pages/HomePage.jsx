@@ -6,11 +6,12 @@ import { Container, Row, Col, Card, Button, Spinner, Carousel, Badge, Modal, Pag
 import { toast } from 'react-toastify';
 import './css/HomePage.css';
 import ProductSkeleton from "../components/skeletons/ProductSkeleton";
-
+import { useCart } from '../context/CartContext.jsx';
 export default function HomePage() {
   const [products, setProducts] = useState([]);
   const [topProducts, setTopProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { fetchCartCount } = useCart();
 
   // --- PAGINATION STATE'LERİ (YENİ) ---
   const [currentPage, setCurrentPage] = useState(1);
@@ -127,8 +128,9 @@ export default function HomePage() {
         );
         toast.success(`${quantity} adet sepete eklendi! 🛒`);
       }
+      fetchCartCount();
 
-      fetchAllData();
+      //fetchAllData();
       setShowModal(false);
 
     } catch (err) {

@@ -5,6 +5,7 @@ import { Container, Row, Col, Card, Button, Form, Spinner, Image } from 'react-b
 import { toast } from 'react-toastify';
 import CartSkeleton from "../components/skeletons/CartSkeleton";
 
+
 export default function CartPage() {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);

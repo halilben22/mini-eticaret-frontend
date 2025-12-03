@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Navbar, Container, Nav, Button, Badge } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import '../components/NavbarCustom.css';
+import { useCart } from '../context/CartContext.jsx';
 
 // --- EKSİK OLAN PARÇA BU: Token Çözücü ---
 const parseJwt = (token) => {
@@ -17,6 +19,7 @@ export default function NavbarCustom() {
 
   // State'ler
   const [userRole, setUserRole] = useState(null);
+  const { cartCount, setCartCount } = useCart();
   const token = localStorage.getItem("token");
 
   // Sayfa yüklendiğinde veya token değiştiğinde Rolü bul
@@ -26,14 +29,19 @@ export default function NavbarCustom() {
       if (decoded && decoded.role) {
         setUserRole(decoded.role.toLowerCase()); // Büyük/küçük harf sorunu olmasın diye
       }
+
     } else {
       setUserRole(null);
+      setCartCount(0);
     }
-  }, [token]);
+  }, [token, setCartCount]);
+
 
   const handleLogout = () => {
     localStorage.removeItem("token");
+    setCartCount(0)
     navigate("/login");
+
     window.location.reload(); // State'leri temizlemek için
   };
 
@@ -65,7 +73,18 @@ export default function NavbarCustom() {
             ) : (
               <>
                 <Nav.Link as={Link} to="/cart" className="nav-link-custom mx-2">
-                  Sepetim <Badge bg="light" text="dark" pill>New</Badge>
+                  Sepetim
+                  {cartCount > 0 && (
+                    <Badge
+                      bg="light"
+                      text="dark"
+                      pill
+                      className="ms-1"
+                      style={{ fontSize: "0.7rem", verticalAlign: "top" }}
+                    >
+                      {cartCount}
+                    </Badge>
+                  )}
                 </Nav.Link>
                 <Nav.Link as={Link} to="/orders" className="nav-link-custom mx-2">Siparişlerim</Nav.Link>
 
