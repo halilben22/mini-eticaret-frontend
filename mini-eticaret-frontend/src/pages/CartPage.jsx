@@ -8,11 +8,16 @@ import CartSkeleton from "../components/skeletons/CartSkeleton";
 export default function CartPage() {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // Adres State'i
   const [addrForm, setAddrForm] = useState({
     city: "",
     district: "",
-    detail: "" // Sokak, Mahalle, Kapı No vb.
+    detail: ""
   });
+
+  // YENİ: Promosyon Kodu State'i
+  const [promoCode, setPromoCode] = useState("");
 
   const navigate = useNavigate();
 
@@ -40,29 +45,49 @@ export default function CartPage() {
   useEffect(() => { fetchCart(); }, []);
 
   const handleCheckout = async () => {
-
+    // 1. Adres Validasyonu (Boş mu?)
+    if (!addrForm.city || !addrForm.district || !addrForm.detail) {
+      toast.warning("Lütfen adres bilgilerini tam giriniz!");
+      return;
+    }
 
     const combinedAddress = `${addrForm.detail}, ${addrForm.district} / ${addrForm.city}`;
     const token = localStorage.getItem("token");
 
     try {
-      // 👇 İŞTE TAM BURADA ÇAĞIRIYORSUN 👇
+      // 2. Backend İsteği (Promo Code ile)
       const response = await axios.post("http://localhost:8080/create-order",
-        { shipping_address: combinedAddress },
+        {
+          shipping_address: combinedAddress,
+          promo_code: promoCode // <--- YENİ: Kodu gönderiyoruz
+        },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      const { order_id, total } = response.data;
-      navigate("/payment", { state: { orderId: order_id, totalAmount: total } });
+      // 3. Gelen Detaylı Verileri Al
+      const { order_id, total, sub_total, shipping, discount_amount } = response.data;
+
+      // 4. Ödeme Sayfasına Taşı
+      navigate("/payment", {
+        state: {
+          orderId: order_id,
+          totalAmount: total,
+          subTotal: sub_total, // Fiş detayı için
+          shipping: shipping,
+          discount: discount_amount
+        }
+      });
 
     } catch (error) {
       toast.error(error.response?.data?.error || "Hata oluştu");
     }
   };
 
-  // Sepet Toplamı
+  // Sepet Toplamı (Sadece ürünlerin toplamı, indirim öncesi)
   const totalPrice = cartItems.reduce((acc, item) => acc + (item.product.price * item.quantity), 0);
+
   if (loading) return <CartSkeleton />
+
   return (
     <Container className="py-5">
       <h2 className="mb-4 fw-bold text-secondary">Sepetim ({cartItems.length} Ürün)</h2>
@@ -99,7 +124,7 @@ export default function CartPage() {
                       <small className="text-muted">Birim Fiyat: {item.product.price} ₺</small>
                     </Col>
 
-                    {/* Adet ve Toplam (Mobilde alt satıra geçebilir) */}
+                    {/* Adet ve Toplam */}
                     <Col xs={12} md={4} className="mt-3 mt-md-0 d-flex justify-content-between align-items-center">
                       <div className="d-flex align-items-center border rounded px-2">
                         <small className="fw-bold me-2">Adet:</small>
@@ -126,15 +151,16 @@ export default function CartPage() {
                 </div>
                 <div className="d-flex justify-content-between mb-3 text-success">
                   <span>Kargo</span>
-                  <span>Bedava</span>
+                  <span>Alıcı Ödemeli (Hesaplanacak)</span>
                 </div>
                 <hr />
                 <div className="d-flex justify-content-between mb-4 fs-4 fw-bold">
                   <span>Toplam</span>
+                  {/* Buradaki toplam henüz indirim düşülmemiş ham toplamdır */}
                   <span className="text-primary">{totalPrice.toFixed(2)} ₺</span>
                 </div>
 
-                {/* --- ADRES FORMU BAŞLANGICI --- */}
+                {/* --- ADRES FORMU --- */}
                 <div className="mb-3">
                   <Form.Label className="small fw-bold text-muted">Teslimat Adresi</Form.Label>
 
@@ -166,10 +192,24 @@ export default function CartPage() {
                     style={{ resize: "none" }}
                   />
                 </div>
-                {/* --- ADRES FORMU BİTİŞİ --- */}
+
+                {/* --- YENİ: KUPON KODU ALANI --- */}
+                <div className="mb-4">
+                  <Form.Label className="small fw-bold text-muted">İndirim Kuponu</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Kupon Kodu (Opsiyonel)"
+                    value={promoCode}
+                    onChange={(e) => setPromoCode(e.target.value.toUpperCase())} // Otomatik büyük harf
+                  />
+                  <Form.Text className="text-muted small">
+                    *İndirim ödeme ekranında düşecektir.
+                  </Form.Text>
+                </div>
+                {/* ------------------------------- */}
 
                 <Button variant="success" size="lg" className="w-100 fw-bold" onClick={handleCheckout}>
-                  Sepeti Onayla
+                  Siparişi Onayla
                 </Button>
               </Card.Body>
             </Card>
