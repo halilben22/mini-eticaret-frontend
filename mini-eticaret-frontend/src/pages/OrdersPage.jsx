@@ -4,10 +4,11 @@ import { Container, Card, Badge, Spinner, Row, Col } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 import './css/OrdersPage.css';
 import OrdersSkeleton from '../components/skeletons/OrdersPageSkeleton.jsx';
-
+import { useTranslation } from 'react-i18next';
 export default function OrdersPage() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -32,10 +33,10 @@ export default function OrdersPage() {
 
   const getStatusBadge = (status) => {
     switch (status) {
-      case "paid": return <Badge bg="success" className="p-2">Ödendi ✅</Badge>;
-      case "waiting_payment": return <Badge bg="warning" text="dark" className="p-2">Ödeme Bekliyor ⏳</Badge>;
-      case "shipped": return <Badge bg="info" className="p-2">Kargolandı 🚛</Badge>;
-      case "delivered": return <Badge bg="primary" className="p-2">Teslim Edildi 📦</Badge>;
+      case "paid": return <Badge bg="success" className="p-2">{t('orders.summary.paid')}</Badge>;
+      case "waiting_payment": return <Badge bg="warning" text="dark" className="p-2">{t('orders.summary.waiting_payment')}</Badge>;
+      case "shipped": return <Badge bg="info" className="p-2">{t('orders.summary.shipped')}</Badge>;
+      case "delivered": return <Badge bg="primary" className="p-2">{t('orders.summary.delivered')}</Badge>;
       default: return <Badge bg="secondary" className="p-2">{status}</Badge>;
     }
   };
@@ -51,12 +52,12 @@ export default function OrdersPage() {
 
   return (
     <Container className="py-4 h-100 d-flex flex-column">
-      <h2 className="mb-4 fw-bold text-secondary">📦 Sipariş Geçmişim</h2>
+      <h2 className="mb-4 fw-bold text-secondary">{t('orders.title')}</h2>
 
       {orders.length === 0 ? (
         <div className="text-center p-5 bg-white rounded shadow-sm">
-          <h4>Henüz siparişiniz yok.</h4>
-          <p>İlk siparişinizi vermek için ana sayfaya göz atın.</p>
+          <h4>{t('orders.no_orders')}</h4>
+          <p>{t('orders.first_order_prompt')}</p>
         </div>
       ) : (
 
@@ -78,7 +79,7 @@ export default function OrdersPage() {
 
                     {/* Ürün Listesi (Kendi içinde kaydırılabilir) */}
                     <div className="bg-light p-3 rounded mb-3" style={{ height: "120px", overflowY: "auto" }}>
-                      <small className="fw-bold text-muted d-block mb-2 border-bottom pb-1">ÜRÜNLER</small>
+                      <small className="fw-bold text-muted d-block mb-2 border-bottom pb-1">{t('orders.product_list')}</small>
                       {order.order_items?.map((item) => (
                         <div key={item.id} className="d-flex justify-content-between small mb-2">
                           <span className="text-truncate" style={{ maxWidth: "150px" }}>{item.quantity}x {item.product?.name}</span>
@@ -97,9 +98,9 @@ export default function OrdersPage() {
 
                       {/* Kargo */}
                       <div className="d-flex justify-content-between small text-secondary mb-1">
-                        <span>Kargo:</span>
+                        <span>{t('orders.shipping')}:</span>
                         {order.shipping_fee === 0 ? (
-                          <span className="text-success fw-bold">Bedava</span>
+                          <span className="text-success fw-bold">{t('orders.free')}</span>
                         ) : (
                           <span>{formatMoney(order.shipping_fee)}</span>
                         )}
@@ -109,7 +110,7 @@ export default function OrdersPage() {
                       {order.discount_amount > 0 && (
                         <div className="d-flex justify-content-between small text-success fw-bold mb-1">
                           <span>
-                            İndirim {order.applied_promo_code && `(${order.applied_promo_code})`}:
+                            {t('orders.discount')} {order.applied_promo_code && `(${order.applied_promo_code})`}:
                           </span>
                           <span>-{formatMoney(order.discount_amount)}</span>
                         </div>
@@ -119,7 +120,7 @@ export default function OrdersPage() {
 
                       {/* Genel Toplam */}
                       <div className="d-flex justify-content-between align-items-center">
-                        <span className="text-dark fw-bold">Genel Toplam:</span>
+                        <span className="text-dark fw-bold">{t('orders.total')}:</span>
                         <span className="fs-5 fw-bold text-primary">{formatMoney(order.total_amount)}</span>
                       </div>
                     </div>

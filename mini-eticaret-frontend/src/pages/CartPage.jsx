@@ -4,11 +4,14 @@ import { useNavigate, Link } from "react-router-dom";
 import { Container, Row, Col, Card, Button, Form, Spinner, Image } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 import CartSkeleton from "../components/skeletons/CartSkeleton";
+import { useCart } from '../context/CartContext.jsx';
 
 
 export default function CartPage() {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { fetchCartCount } = useCart();
+
 
   // Adres State'i
   const [addrForm, setAddrForm] = useState({
@@ -78,6 +81,8 @@ export default function CartPage() {
           discount: discount_amount
         }
       });
+
+      fetchCartCount(); // Sepet sayısını güncelle
 
     } catch (error) {
       toast.error(error.response?.data?.error || "Hata oluştu");

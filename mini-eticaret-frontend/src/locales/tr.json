@@ -1,0 +1,51 @@
+{
+    "navbar": {
+        "logo": "Arsella",
+        "home": "Ana Sayfa",
+        "login": "Giriş Yap",
+        "register": "Kayıt Ol",
+        "logout": "Çıkış Yap",
+        "cart": "Sepetim",
+        "orders": "Siparişlerim",
+        "admin": "Admin Panel"
+    },
+    "home": {
+        "search_placeholder": "Ürün ara...",
+        "all_products": "Tüm Ürünler",
+        "clear_search": "Aramayı Temizle",
+        "view_and_buy": "İncele & Satın Al",
+        "top_rated": "Haftanın Ürünleri",
+        "add_to_cart": "Sepete Ekle",
+        "out_of_stock": "Tükendi"
+    },
+    "cart": {
+        "title": "Sepetim",
+        "empty": "Sepetinizde ürün yok.",
+        "checkout_btn": "Sepeti Onayla ✅"
+    },
+    "messages": {
+        "success_add": "Ürün başarıyla eklendi!",
+        "error_general": "Bir hata oluştu."
+    },
+    "orders": {
+        "title": "Siparişlerim",
+        "first_order_prompt": "İlk siparişinizi vermek için ana sayfaya göz atın.",
+        "product_list": "ÜRÜNLER",
+        "order_id": "Sipariş ID",
+        "date": "Tarih",
+        "discount": "İndirim",
+        "shipping": "Kargo",
+        "free": "Bedava",
+        "total": "Toplam",
+        "status": "Durum",
+        "no_orders": "Henüz siparişiniz yok.",
+        "summarycard": "Sipariş Özeti",
+        "summary": {
+            "paid": "Ödendi",
+            "waiting_payment": "Ödeme Bekliyor",
+            "shipped": "Kargolandı",
+            "delivered": "Teslim Edildi",
+            "canceled": "İptal Edildi"
+        }
+    }
+}

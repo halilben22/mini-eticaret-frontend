@@ -7,11 +7,13 @@ import { toast } from 'react-toastify';
 import './css/HomePage.css';
 import ProductSkeleton from "../components/skeletons/ProductSkeleton";
 import { useCart } from '../context/CartContext.jsx';
+import { useTranslation } from 'react-i18next';
 export default function HomePage() {
   const [products, setProducts] = useState([]);
   const [topProducts, setTopProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const { fetchCartCount } = useCart();
+  const { t } = useTranslation();
 
   // --- PAGINATION STATE'LERİ (YENİ) ---
   const [currentPage, setCurrentPage] = useState(1);
@@ -170,7 +172,7 @@ export default function HomePage() {
       {/* SLIDER KISMI (Sadece arama yoksa ve 1. sayfadaysak gösterelim - Opsiyonel) */}
       {!searchParams.get("name") && currentPage === 1 && topProducts.length > 0 && (
         <div className="mb-5">
-          <h3 className="fw-bold text-secondary mb-3">Haftanın Yıldızları</h3>
+          <h3 className="fw-bold text-secondary mb-3">{t('home.top_rated')}</h3>
           <Carousel className="shadow-lg rounded-3 overflow-hidden">
             {topProducts.map((prod) => (
               <Carousel.Item key={prod.id} interval={3000}>
@@ -181,7 +183,7 @@ export default function HomePage() {
                   <Badge bg="warning" text="dark" className="mb-2">★ {prod.average_rating.toFixed(1)} Puan</Badge>
                   <h2 className="fw-bold">{prod.name}</h2>
                   <p className="lead">{prod.description}</p>
-                  <Link to={`/product/${prod.id}`}><Button variant="light" size="lg" className="fw-bold">İncele & Satın Al</Button></Link>
+                  <Link to={`/product/${prod.id}`}><Button variant="light" size="lg" className="fw-bold">{t('home.view_and_buy')}</Button></Link>
                 </Carousel.Caption>
               </Carousel.Item>
             ))}
@@ -192,9 +194,9 @@ export default function HomePage() {
       {/* ÜRÜN LİSTESİ BAŞLIK */}
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2 className="fw-bold text-secondary">
-          {searchParams.get("name") ? ` "${searchParams.get("name")}" Sonuçları` : " Vitrin Fırsatları"}
+          {searchParams.get("name") ? ` "${searchParams.get("name")}" Sonuçları` : t('home.all_products')}
         </h2>
-        {searchParams.get("name") && <Button variant="outline-danger" size="sm" onClick={() => navigate("/")}>Aramayı Temizle ❌</Button>}
+        {searchParams.get("name") && <Button variant="outline-danger" size="sm" onClick={() => navigate("/")}>{t('home.clear_search')}</Button>}
       </div>
 
       {/* ÜRÜN KARTLARI */}
@@ -219,7 +221,7 @@ export default function HomePage() {
                 <div className="mt-auto d-flex justify-content-between align-items-center pt-3">
                   <span className="price-tag text-primary fw-bold">{product.price} ₺</span>
                   <Button variant="outline-primary" size="sm" onClick={() => openAddModal(product)}>
-                    Sepete Ekle
+                    {t('home.add_to_cart')}
                   </Button>
                 </div>
               </Card.Body>

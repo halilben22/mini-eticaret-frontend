@@ -14,7 +14,7 @@ export default function Footer() {
 
                     {/* 1. Kısım: Hakkımızda */}
                     <Col md={4} className="mb-4">
-                        <h5 className="fw-bold text-white mb-3">🛒 MiniShop</h5>
+                        <h5 className="fw-bold text-white mb-3">Arsella</h5>
                         <p className="small text-secondary">
                             En yeni teknolojik ürünlerden giyime, ev yaşamından kitaba kadar aradığınız her şey burada.
                             Güvenli ödeme ve hızlı kargo ile alışverişin keyfini çıkarın.
@@ -68,7 +68,7 @@ export default function Footer() {
                                     <FontAwesomeIcon icon={faGoogle} className="fs-3 text-danger" />
                                     <div>
                                         <div className="small text-secondary">E-Posta</div>
-                                        <span className="fw-bold">destek@minishop.com</span>
+                                        <span className="fw-bold">destek@arella.com</span>
                                     </div>
                                 </a>
                             </li>

@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 import ProductInfo from "../components/product/ProductInfo";
 import ProductReviews from "../components/product/ProductReviews";
 import ProductDetailSkeleton from "../components/skeletons/ProductDetailSkeleton";
+import { useCart } from '../context/CartContext.jsx';
 export default function ProductDetailPage() {
     const { id } = useParams();
 
@@ -14,6 +15,7 @@ export default function ProductDetailPage() {
     const [averageRating, setAverageRating] = useState(0);
     const [loading, setLoading] = useState(true);
     const [cartQuantity, setCartQuantity] = useState(0);
+    const { fetchCartCount } = useCart();
 
     // Veri Çekme Fonksiyonu (Tekrar kullanılacağı için ayırdık)
     const fetchProductData = useCallback(async () => {
@@ -77,6 +79,7 @@ export default function ProductDetailPage() {
             );
 
             toast.success(`${quantity} adet ürün sepete eklendi! `);
+            fetchCartCount();
 
         } catch (error) {
             console.error(error);

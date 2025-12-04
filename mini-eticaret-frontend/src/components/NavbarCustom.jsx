@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../components/NavbarCustom.css';
 import { useCart } from '../context/CartContext.jsx';
+import { useTranslation } from 'react-i18next';
 
 // --- EKSİK OLAN PARÇA BU: Token Çözücü ---
 const parseJwt = (token) => {
@@ -21,6 +22,7 @@ export default function NavbarCustom() {
   const [userRole, setUserRole] = useState(null);
   const { cartCount, setCartCount } = useCart();
   const token = localStorage.getItem("token");
+  const { t } = useTranslation();
 
   // Sayfa yüklendiğinde veya token değiştiğinde Rolü bul
   useEffect(() => {
@@ -50,7 +52,7 @@ export default function NavbarCustom() {
       <Container>
         {/* LOGO (SOLDA) */}
         <Navbar.Brand as={Link} to="/" className="custom-brand">
-          Arella
+          Arsella
         </Navbar.Brand>
 
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -59,21 +61,21 @@ export default function NavbarCustom() {
           {/* LİNKLER (SAĞDA - ms-auto ile ittik) */}
           <Nav className="ms-auto align-items-center">
 
-            <Nav.Link as={Link} to="/" className="nav-link-custom mx-2">Ana Sayfa</Nav.Link>
+            <Nav.Link as={Link} to="/" className="nav-link-custom mx-2">{t('navbar.home')}</Nav.Link>
 
             {!token ? (
               <>
 
-                <Nav.Link as={Link} to="/login" className="nav-link-custom mx-2">Giriş Yap</Nav.Link>
+                <Nav.Link as={Link} to="/login" className="nav-link-custom mx-2">{t('navbar.login')}</Nav.Link>
 
                 <Button as={Link} to="/register" variant="primary" size="sm" className="ms-2 fw-bold">
-                  Kayıt Ol
+                  {t('navbar.register')}
                 </Button>
               </>
             ) : (
               <>
                 <Nav.Link as={Link} to="/cart" className="nav-link-custom mx-2">
-                  Sepetim
+                  {t('navbar.cart')}
                   {cartCount > 0 && (
                     <Badge
                       bg="light"
@@ -86,7 +88,7 @@ export default function NavbarCustom() {
                     </Badge>
                   )}
                 </Nav.Link>
-                <Nav.Link as={Link} to="/orders" className="nav-link-custom mx-2">Siparişlerim</Nav.Link>
+                <Nav.Link as={Link} to="/orders" className="nav-link-custom mx-2">{t('navbar.orders')}</Nav.Link>
 
                 {/* --- ADMIN BUTONU BURADA --- */}
                 {userRole === "admin" && (
@@ -97,7 +99,7 @@ export default function NavbarCustom() {
                     size="sm"
                     className="ms-2 fw-bold border-1"
                   >
-                    👑 Admin Panel
+                    {t('navbar.admin')}
                   </Button>
                 )}
                 <span>
@@ -105,7 +107,7 @@ export default function NavbarCustom() {
                 </span>
 
                 <Button variant="danger" size="sm" onClick={handleLogout} className="ms-3">
-                  Çıkış
+                  {t('navbar.logout')}
                 </Button>
               </>
             )}
