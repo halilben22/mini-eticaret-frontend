@@ -14,7 +14,7 @@ export default function LoginPage() {
     try {
       const response = await axios.post("http://localhost:8080/login", { email, password });
       localStorage.setItem("token", response.data.token);
-      toast.success("Hoş geldiniz! 👋");
+      toast.success("Hoş geldiniz!");
       navigate("/");
       window.location.reload(); // Navbar'daki state'i güncellemek için
     } catch (err) {

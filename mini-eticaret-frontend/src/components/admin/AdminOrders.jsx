@@ -40,11 +40,11 @@ export default function AdminOrders() {
 
     const getStatusBadge = (status) => {
         switch (status) {
-            case 'paid': return <Badge bg="success">Ödendi ✅</Badge>;
-            case 'shipped': return <Badge bg="info" text="dark">Kargolandı 🚛</Badge>;
-            case 'delivered': return <Badge bg="primary">Teslim Edildi 📦</Badge>;
-            case 'waiting_payment': return <Badge bg="warning" text="dark">Ödeme Bekliyor ⏳</Badge>;
-            case 'cancelled': return <Badge bg="danger">İptal ❌</Badge>;
+            case 'paid': return <Badge bg="success">Ödendi </Badge>;
+            case 'shipped': return <Badge bg="info" text="dark">Kargolandı </Badge>;
+            case 'delivered': return <Badge bg="primary">Teslim Edildi </Badge>;
+            case 'waiting_payment': return <Badge bg="warning" text="dark">Ödeme Bekliyor</Badge>;
+            case 'cancelled': return <Badge bg="danger">İptal </Badge>;
             default: return <Badge bg="secondary">{status}</Badge>;
         }
     };
@@ -54,7 +54,7 @@ export default function AdminOrders() {
     return (
         <Card className="border-0 shadow-sm">
             <Card.Header className="bg-white py-3">
-                <h5 className="mb-0 fw-bold text-secondary">📋 Sipariş Listesi ({orders.length})</h5>
+                <h5 className="mb-0 fw-bold text-secondary"> Sipariş Listesi ({orders.length})</h5>
             </Card.Header>
             <Card.Body className="p-0">
                 <div className="admin-table-scroll" style={{ maxHeight: "500px", overflowY: "auto" }}>

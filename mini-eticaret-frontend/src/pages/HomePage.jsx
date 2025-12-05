@@ -15,12 +15,12 @@ export default function HomePage() {
   const { fetchCartCount } = useCart();
   const { t } = useTranslation();
 
-  // --- PAGINATION STATE'LERİ (YENİ) ---
+  //  PAGINATION STATE'LERİ
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   // ------------------------------------
 
-  // Sepetteki ürünleri tutacağımız State
+  // Sepetteki ürünlerin tutulduğu state
   const [cartItems, setCartItems] = useState([]);
 
   // --- MODAL İÇİN STATE'LER ---
@@ -39,27 +39,28 @@ export default function HomePage() {
     try {
       const searchQuery = searchParams.get("name");
 
-      // --- URL GÜNCELLEMESİ (SAYFALAMA İÇİN) ---
+
+      // URL GÜNCELLEMESİ (SAYFALAMA İÇİN) 
       // Varsayılan olarak sayfa ve limiti ekliyoruz
       let url = `http://localhost:8080/products?page=${currentPage}&limit=8`;
 
       // Arama varsa URL'in sonuna &name=... olarak ekliyoruz
       if (searchQuery) url += `&name=${searchQuery}`;
 
-      // A. Ürünleri Çek
+      // Ürünleri Çek
       const prodRes = await axios.get(url);
       setProducts(prodRes.data.data || []);
 
-      // Meta verisinden toplam sayfa sayısını al (Backend'de bu yapıyı kurmuştuk)
+      // Meta verisinden toplam sayfa sayısını al 
       if (prodRes.data.meta) {
         setTotalPages(prodRes.data.meta.total_pages);
       }
 
-      // Slider sadece 1. sayfada ve arama yoksa görünsün istersen buraya if koyabilirsin
+      // En Çok Puan Alan Ürünleri Çek
       const topRes = await axios.get("http://localhost:8080/products/top-rated");
       setTopProducts(topRes.data.data || []);
 
-      // B. Sepeti Çek (Giriş yapmışsa)
+      // Sepeti Çek (Giriş yapmışsa)
       const token = localStorage.getItem("token");
       if (token) {
         try {
@@ -83,8 +84,7 @@ export default function HomePage() {
   // useEffect hem arama değişince hem de sayfa (currentPage) değişince çalışmalı
   useEffect(() => {
     fetchAllData();
-    // Sayfa değişince en yukarı kaydır
-    window.scrollTo(0, 0);
+    window.scrollTo(0, 0); // Sayfa değişince en yukarı kaydır
   }, [searchParams, currentPage]);
 
   // Sayfa Değiştirme Yardımcısı
@@ -92,7 +92,7 @@ export default function HomePage() {
     setCurrentPage(pageNumber);
   };
 
-  // 2. ADIM: PENCEREYİ AÇMA
+  // PENCEREYİ AÇMA
   const openAddModal = (product) => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -111,7 +111,7 @@ export default function HomePage() {
     setShowModal(true);
   };
 
-  // 3. ADIM: ONAYLAMA
+  // SEPETE EKLEMEYİ ONAYLAMA
   const handleConfirmAddToCart = async () => {
     if (!selectedProduct) return;
     const token = localStorage.getItem("token");
@@ -122,13 +122,13 @@ export default function HomePage() {
           { product_id: selectedProduct.id, quantity: quantity },
           { headers: { Authorization: `Bearer ${token}` } }
         );
-        toast.success(`Sepet güncellendi: ${quantity} adet ✅`);
+        toast.success(`Sepet güncellendi: ${quantity} adet `);
       } else {
         await axios.post("http://localhost:8080/cart",
           { product_id: selectedProduct.id, quantity: quantity },
           { headers: { Authorization: `Bearer ${token}` } }
         );
-        toast.success(`${quantity} adet sepete eklendi! 🛒`);
+        toast.success(`${quantity} adet sepete eklendi! `);
       }
       fetchCartCount();
 
@@ -169,7 +169,7 @@ export default function HomePage() {
   return (
     <Container className="py-5 d-flex flex-column flex-grow-1" style={{ minHeight: "95vh" }}>
 
-      {/* SLIDER KISMI (Sadece arama yoksa ve 1. sayfadaysak gösterelim - Opsiyonel) */}
+      {/* SLIDER KISMI*/}
       {!searchParams.get("name") && currentPage === 1 && topProducts.length > 0 && (
         <div className="mb-5">
           <h3 className="fw-bold text-secondary mb-3">{t('home.top_rated')}</h3>
@@ -199,7 +199,7 @@ export default function HomePage() {
         {searchParams.get("name") && <Button variant="outline-danger" size="sm" onClick={() => navigate("/")}>{t('home.clear_search')}</Button>}
       </div>
 
-      {/* ÜRÜN KARTLARI */}
+      {/* ÜRÜN KARTLARI KISMI */}
       <Row className="mb-auto">
         {products.map((product) => (
           <Col key={product.id} xs={12} sm={6} md={4} lg={3} className="mb-4">
@@ -230,10 +230,10 @@ export default function HomePage() {
         ))}
       </Row>
 
-      {/* PAGINATION */}
+      {/* PAGINATION KISMI */}
       {totalPages > 1 && (
         <div className="d-flex justify-content-center mt-auto pt-4">
-          <Pagination>
+          <Pagination className="pagination-item">
             <Pagination.Prev onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1} />
 
             {[...Array(totalPages)].map((_, i) => (
@@ -252,7 +252,7 @@ export default function HomePage() {
       )}
       {/* ------------------------------------------------ */}
 
-      {/* MODAL */}
+      {/* MODAL KISMI */}
       <Modal show={showModal} onHide={() => setShowModal(false)} centered>
         <Modal.Header closeButton className="border-0">
           <Modal.Title className="fw-bold text-primary">
@@ -290,7 +290,7 @@ export default function HomePage() {
         <Modal.Footer className="border-0 justify-content-center">
           <Button variant="secondary" onClick={() => setShowModal(false)}>Vazgeç</Button>
           <Button variant="primary" className="px-4 fw-bold" onClick={handleConfirmAddToCart}>
-            {initialQty > 0 ? "Sepeti Güncelle 🔄" : "Sepete Ekle ✅"}
+            {initialQty > 0 ? "Sepeti Güncelle 🔄" : "Sepete Ekle "}
           </Button>
         </Modal.Footer>
       </Modal>

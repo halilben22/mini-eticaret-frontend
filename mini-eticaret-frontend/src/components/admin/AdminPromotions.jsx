@@ -49,6 +49,7 @@ export default function AdminPromotions() {
         }
     };
 
+    //PROMOSYON DELETE PART
     const handleDelete = async (id) => {
         if (!window.confirm("Silmek istediğine emin misin?")) return;
         const token = localStorage.getItem("token");
@@ -65,15 +66,15 @@ export default function AdminPromotions() {
 
     return (
         <Row>
-            {/* SOL: Ekleme */}
+            {/* ADD PROMOTION..*/}
             <Col md={4} className="mb-4">
                 <Card className="shadow-sm border-0">
-                    <Card.Header className="bg-white fw-bold py-3 text-primary">✨ Yeni Kupon Ekle</Card.Header>
+                    <Card.Header className="bg-white fw-bold py-3 text-primary">Kupon Ekle</Card.Header>
                     <Card.Body>
                         <Form onSubmit={handleCreate}>
                             <Form.Group className="mb-3">
                                 <Form.Label className="small fw-bold">Kod</Form.Label>
-                                <Form.Control type="text" placeholder="Örn: YAZ20" value={newPromo.code} onChange={e => setNewPromo({ ...newPromo, code: e.target.value.toUpperCase() })} required />
+                                <Form.Control type="text" placeholder="Örn: YAZ25" value={newPromo.code} onChange={e => setNewPromo({ ...newPromo, code: e.target.value.toUpperCase() })} required />
                             </Form.Group>
                             <Form.Group className="mb-3">
                                 <Form.Label className="small fw-bold">Tip</Form.Label>
@@ -99,11 +100,11 @@ export default function AdminPromotions() {
                 </Card>
             </Col>
 
-            {/* SAĞ: Liste */}
+            {/* PROMOTION LIST PART */}
             <Col md={8}>
                 <Card className="shadow-sm border-0">
-                    <Card.Header className="bg-white fw-bold py-3">🏷️ Aktif Kampanyalar</Card.Header>
-                    <div style={{ maxHeight: "500px", overflowY: "auto" }}>
+                    <Card.Header className="bg-white fw-bold py-3">Aktif Kampanyalar</Card.Header>
+                    <div className="admin-table-scroll"   >
                         <Table hover responsive className="mb-0 align-middle">
                             <thead className="bg-light sticky-top" style={{ top: 0 }}>
                                 <tr>
@@ -133,6 +134,6 @@ export default function AdminPromotions() {
                     </div>
                 </Card>
             </Col>
-        </Row>
+        </Row >
     );
 }

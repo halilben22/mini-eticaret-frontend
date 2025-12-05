@@ -9,7 +9,7 @@ import '../admin/css/AdminDashnoardPage.css';
 // Yeni bileşenleri çağırıyoruz
 import AdminOrders from "../../components/admin/AdminOrders";
 import AdminPromotions from "../../components/admin/AdminPromotions";
-
+import AdminProducts from "../../components/admin/AdminProducts";
 export default function AdminDashboard() {
     const [stats, setStats] = useState({ total_orders: 0, total_revenue: 0 });
     const [loading, setLoading] = useState(true);
@@ -58,7 +58,7 @@ export default function AdminDashboard() {
                 </Link>
             </div>
 
-            {/* İSTATİSTİK KARTLARI (DASHBOARD) */}
+            {/* İSTATİSTİKSEL ŞEYLER*/}
             <Row className="mb-5 g-4">
                 <Col md={6}>
                     <Card className="border-0 shadow-sm h-100 text-white" style={{ background: "linear-gradient(135deg, #ff6600 0%, #ff8533 100%)" }}>
@@ -71,7 +71,7 @@ export default function AdminDashboard() {
                     </Card>
                 </Col>
                 <Col md={6}>
-                    <Card className="border-0 shadow-sm h-100 text-white" style={{ background: "linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%)" }}>
+                    <Card className="border-0 shadow-sm h-100 text-white" style={{ background: "linear-gradient(135deg, #ff6600 0%, #ff8533 100%)" }}>
                         <Card.Body className="text-center d-flex flex-column justify-content-center p-4">
                             <h5 className="text-white-50 text-uppercase letter-spacing-1">Toplam Sipariş</h5>
                             <h1 className="display-4 fw-bold mb-0">
@@ -82,18 +82,21 @@ export default function AdminDashboard() {
                 </Col>
             </Row>
 
-            {/* --- SEKMELİ YAPI (TABS) --- */}
-            <Card className="border-0 shadow-sm bg-white p-3">
-                <Tabs defaultActiveKey="orders" id="admin-tabs" className="mb-3 custom-tabs" fill>
+            {/* SEKME YAPISI */}
+            <Card className=" border-0 shadow-sm bg-white p-3">
+                <Tabs defaultActiveKey="orders" id="admin-tabs" className=" mb-3 custom-tabs" fill>
 
-                    <Tab eventKey="orders" title="📦 Sipariş Yönetimi">
+                    <Tab eventKey="orders" title="Sipariş Yönetimi" style={{ color: "primary" }}>
                         <AdminOrders />
                     </Tab>
 
-                    <Tab eventKey="promotions" title="🎟️ Kampanya & Kuponlar">
+                    <Tab eventKey="promotions" title=" Kampanya & Kuponlar" color="text-primary">
                         <AdminPromotions />
                     </Tab>
 
+                    <Tab eventKey="products" title="Ürün Yönetimi" style={{ color: "primary" }}>
+                        <AdminProducts />
+                    </Tab>
                 </Tabs>
             </Card>
 

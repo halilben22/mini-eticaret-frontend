@@ -96,3 +96,83 @@ body {
     color: white !important;
     cursor: pointer;
 }
+
+
+
+/* --- PAGINATION RENK AYARLARI --- */
+
+/* Normal Durumdaki Sayfa Numaraları */
+.page-link {
+    color: var(--main-orange) !important;
+    /* Yazı rengi turuncu */
+    background-color: white;
+    border: 1px solid #dee2e6;
+    box-shadow: none !important;
+    /* Tıklayınca çıkan mavi gölgeyi kaldır */
+}
+
+/* Mouse ile üzerine gelince (Hover) */
+.page-link:hover {
+    color: var(--dark-orange) !important;
+    background-color: var(--light-orange) !important;
+    /* Hafif turuncu zemin */
+    border-color: #dee2e6;
+}
+
+/* Aktif Olan Sayfa (Seçili Olan) */
+.page-item.active .page-link {
+    background-color: var(--main-orange) !important;
+    /* Arkaplan Turuncu */
+    border-color: var(--main-orange) !important;
+    /* Çerçeve Turuncu */
+    color: white !important;
+    /* Yazı Beyaz */
+}
+
+/* 4. Disabled  Butonlar */
+.page-item.disabled .page-link {
+    color: #6c757d !important;
+    background-color: #fff !important;
+    border-color: #dee2e6 !important;
+}
+
+
+/* --- TABS (SEKMELER) RENK AYARLARI --- */
+
+/* 1. Tüm Tab Linklerinin Temel Hali */
+.nav-tabs .nav-link {
+    color: #6c757d;
+    /* Pasifken Gri olsun */
+    font-weight: 600;
+    border: none;
+    /* Varsayılan kutu çizgilerini kaldır */
+    border-bottom: 3px solid transparent;
+    /* Alt çizgi için yer ayır */
+    transition: all 0.3s ease;
+    padding: 10px 20px;
+}
+
+/* 2. Mouse ile üzerine gelince (Hover) */
+.nav-tabs .nav-link:hover {
+    color: var(--main-orange);
+    /* Turuncu olsun */
+    border-color: transparent;
+    /* Kenarlık çıkmasın */
+    background-color: rgba(255, 102, 0, 0.05);
+    /* Çok hafif turuncu arka plan */
+}
+
+/* 3. Aktif (Seçili) Olan Tab */
+.nav-tabs .nav-link.active {
+    color: var(--main-orange) !important;
+    /* Yazı Turuncu */
+    background-color: transparent !important;
+    /* Arkaplan şeffaf/beyaz kalsın */
+    border-bottom: 3px solid var(--main-orange) !important;
+    /* Altına kalın turuncu çizgi çek */
+}
+
+/* Opsiyonel: Tablo ile birleştiği yerdeki çizgiyi de turuncu yapabilirsin */
+.nav-tabs {
+    border-bottom: 1px solid #dee2e6;
+}
